@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>FUD Destroyer | Alpha GEMS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #050510; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Orbitron', sans-serif; color: white; }
+    canvas { border: 2px solid #00d4ff; border-radius: 8px; box-shadow: 0 0 40px rgba(0,212,255,0.4); }
+    #ui { text-align: center; margin-bottom: 14px; }
+    #ui h1 { font-size: 1.5rem; color: #ff6fff; }
+    #hud { display: flex; gap: 40px; margin-top: 8px; justify-content: center; }
+    .stat { font-size: 1rem; }
+    .stat span { color: #ffd700; }
+    #msg { margin-top: 12px; font-size: 0.9rem; color: #9090cc; }
+    a.back { margin-top: 20px; color: #00d4ff; text-decoration: none; font-size: 0.9rem; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div id="ui">
+    <h1>⚔️ FUD DESTROYER</h1>
+    <div id="hud">
+      <div class="stat">Score: <span id="sc">0</span></div>
+      <div class="stat">Lives: <span id="hp">❤️❤️❤️</span></div>
+      <div class="stat">Wave: <span id="wv">1</span></div>
+    </div>
+    <div id="msg">Arrow Keys / WASD to move | Space to shoot</div>
+  </div>
+  <canvas id="c" width="420" height="520"></canvas>
+  <a class="back" href="../index.html">← Back</a>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+let player, bullets, enemies, particles2, score, lives, wave, gameOver, keys, enemyTimer, shootTimer;
+
+const ENEMIES = ['🐻','📉','💀','🚨','❌'];
+
+function init() {
+  player = { x: W/2 - 18, y: H - 70, w: 36, h: 36, speed: 5 };
+  bullets = []; enemies = []; particles2 = [];
+  score = 0; lives = 3; wave = 1; gameOver = false;
+  keys = {}; enemyTimer = 0; shootTimer = 0;
+  document.getElementById('sc').textContent = 0;
+  document.getElementById('hp').textContent = '❤️❤️❤️';
+  document.getElementById('wv').textContent = 1;
+  document.getElementById('msg').textContent = 'Arrow Keys / WASD | Space to shoot';
+  spawnWave();
+  loop2();
+}
+
+function spawnWave() {
+  for (let i = 0; i < 4 + wave * 2; i++) {
+    enemies.push({
+      x: Math.random() * (W - 40) + 10,
+      y: -40 - Math.random() * 100,
+      w: 32, h: 32,
+      speed: 0.8 + wave * 0.25 + Math.random() * 0.5,
+      emoji: ENEMIES[Math.floor(Math.random()*ENEMIES.length)]
+    });
+  }
+}
+
+document.addEventListener('keydown', e => keys[e.key] = true);
+document.addEventListener('keyup', e => keys[e.key] = false);
+canvas.addEventListener('click', e => {
+  if (gameOver) init();
+});
+
+function loop2() {
+  if (gameOver) return;
+  ctx.clearRect(0, 0, W, H);
+  // bg
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, W, H);
+  // stars
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  for (let i = 0; i < 40; i++) {
+    ctx.fillRect((i*137+enemyTimer*0.5)%W, (i*97+enemyTimer*0.3)%H, 1.5, 1.5);
+  }
+
+  // Player move
+  if ((keys['ArrowLeft']||keys['a']) && player.x > 0) player.x -= player.speed;
+  if ((keys['ArrowRight']||keys['d']) && player.x + player.w < W) player.x += player.speed;
+  if ((keys['ArrowUp']||keys['w']) && player.y > H/2) player.y -= player.speed;
+  if ((keys['ArrowDown']||keys['s']) && player.y + player.h < H - 10) player.y += player.speed;
+
+  // Shoot
+  shootTimer++;
+  if (keys[' '] && shootTimer > 10) {
+    bullets.push({ x: player.x + player.w/2 - 3, y: player.y, w: 6, h: 14, speed: 9 });
+    shootTimer = 0;
+  }
+
+  // Draw player (gem spaceship)
+  ctx.font = '36px serif';
+  ctx.fillText('💎', player.x, player.y + 36);
+
+  // Bullets
+  bullets = bullets.filter(b => b.y > -20);
+  bullets.forEach(b => {
+    b.y -= b.speed;
+    ctx.fillStyle = '#00d4ff';
+    ctx.shadowColor = '#00d4ff'; ctx.shadowBlur = 10;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.shadowBlur = 0;
+  });
+
+  // Enemies
+  enemyTimer++;
+  enemies.forEach((e, ei) => {
+    e.y += e.speed;
+    ctx.font = '30px serif';
+    ctx.fillText(e.emoji, e.x, e.y + 30);
+
+    // Hit player
+    if (e.y + e.h > player.y && e.x + e.w > player.x && e.x < player.x + player.w) {
+      enemies.splice(ei, 1);
+      lives--;
+      const hearts = ['❤️❤️❤️','❤️❤️','❤️',''];
+      document.getElementById('hp').textContent = hearts[3 - lives] ?? '';
+      if (lives <= 0) { endGame(); return; }
+    }
+
+    // Off screen
+    if (e.y > H + 40) enemies.splice(ei, 1);
+
+    // Bullet collision
+    bullets.forEach((b, bi) => {
+      if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
+        for (let p = 0; p < 6; p++) particles2.push({ x: e.x+16, y: e.y+16, dx: (Math.random()-0.5)*4, dy: (Math.random()-0.5)*4, life: 20, color: '#ffd700' });
+        enemies.splice(ei, 1);
+        bullets.splice(bi, 1);
+        score += 10;
+        document.getElementById('sc').textContent = score;
+      }
+    });
+  });
+
+  // Particles
+  particles2 = particles2.filter(p => p.life > 0);
+  particles2.forEach(p => {
+    p.x += p.dx; p.y += p.dy; p.life--;
+    ctx.fillStyle = p.color; ctx.globalAlpha = p.life/20;
+    ctx.fillRect(p.x, p.y, 4, 4);
+    ctx.globalAlpha = 1;
+  });
+
+  // Next wave
+  if (enemies.length === 0) { wave++; document.getElementById('wv').textContent = wave; spawnWave(); }
+
+  requestAnimationFrame(loop2);
+}
+
+function endGame() {
+  gameOver = true;
+  ctx.fillStyle = 'rgba(5,5,16,0.85)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.font = 'bold 28px Orbitron';
+  ctx.fillStyle = '#ff6fff';
+  ctx.textAlign = 'center';
+  ctx.fillText('REKT 💀', W/2, H/2 - 40);
+  ctx.font = '18px Orbitron';
+  ctx.fillStyle = '#ffd700';
+  ctx.fillText('Score: ' + score, W/2, H/2);
+  ctx.font = '14px Orbitron';
+  ctx.fillStyle = '#9090cc';
+  ctx.fillText('Click to retry', W/2, H/2 + 40);
+  ctx.textAlign = 'left';
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>GEM Stack | Alpha GEMS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #050510; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Orbitron', sans-serif; color: white; }
+    canvas { border: 2px solid #7b2fff; border-radius: 8px; box-shadow: 0 0 40px rgba(123,47,255,0.5); }
+    #ui { text-align: center; margin-bottom: 20px; }
+    #ui h1 { font-size: 1.5rem; color: #00d4ff; margin-bottom: 6px; }
+    #score { font-size: 1.2rem; color: #ffd700; }
+    #msg { margin-top: 14px; font-size: 1rem; color: #9090cc; }
+    a.back { display: inline-block; margin-top: 20px; color: #00d4ff; text-decoration: none; font-size: 0.9rem; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div id="ui">
+    <h1>💎 GEM STACK</h1>
+    <div id="score">Score: 0</div>
+    <div id="msg">Click / Tap to drop the gem!</div>
+  </div>
+  <canvas id="c" width="340" height="520"></canvas>
+  <a class="back" href="../index.html">← Back to GEMs on Top</a>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const msgEl = document.getElementById('msg');
+
+const W = canvas.width, H = canvas.height;
+const BLOCK_H = 28;
+const COLORS = ['#7b2fff','#00d4ff','#ff6fff','#ffd700','#00ffb3'];
+
+let blocks = [], moving, score = 0, gameOver = false, started = false;
+
+function newBlock(y, width, x) {
+  return { x: x ?? 0, y, width, dx: 2.5, color: COLORS[Math.floor(Math.random()*COLORS.length)] };
+}
+
+function start() {
+  blocks = [];
+  score = 0;
+  gameOver = false;
+  scoreEl.textContent = 'Score: 0';
+  msgEl.textContent = 'Click / Tap to drop!';
+  // Base block
+  blocks.push({ x: W/2 - 70, y: H - BLOCK_H, width: 140, dx: 0, color: '#ffd700' });
+  addMoving();
+  started = true;
+  loop();
+}
+
+function addMoving() {
+  const prev = blocks[blocks.length - 1];
+  moving = newBlock(prev.y - BLOCK_H, prev.width);
+}
+
+function drop() {
+  if (gameOver) { start(); return; }
+  if (!started) { start(); return; }
+  const prev = blocks[blocks.length - 1];
+  // Calculate overlap
+  const left = Math.max(moving.x, prev.x);
+  const right = Math.min(moving.x + moving.width, prev.x + prev.width);
+  const overlap = right - left;
+  if (overlap <= 0) {
+    msgEl.textContent = '💀 Paper Hands! Click to retry.';
+    gameOver = true; return;
+  }
+  moving.dx = 0;
+  moving.x = left;
+  moving.width = overlap;
+  blocks.push({...moving});
+  score++;
+  scoreEl.textContent = 'Score: ' + score;
+  // Scroll up if needed
+  if (moving.y < H * 0.4) {
+    blocks.forEach(b => b.y += BLOCK_H + 2);
+  }
+  addMoving();
+}
+
+canvas.addEventListener('click', drop);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drop(); });
+
+let t = 0;
+function loop() {
+  if (gameOver) return;
+  t++;
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid bg
+  ctx.strokeStyle = 'rgba(123,47,255,0.08)';
+  for(let i=0;i<W;i+=20){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}
+  for(let i=0;i<H;i+=20){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke();}
+
+  // Draw stacked blocks
+  blocks.forEach((b, i) => {
+    ctx.fillStyle = b.color;
+    ctx.shadowColor = b.color;
+    ctx.shadowBlur = 12;
+    roundRect(ctx, b.x, b.y, b.width, BLOCK_H, 6);
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(b.x + 4, b.y + 4, b.width - 8, 6);
+  });
+
+  // Draw moving block
+  moving.x += moving.dx;
+  if (moving.x + moving.width > W) moving.dx = -Math.abs(moving.dx);
+  if (moving.x < 0) moving.dx = Math.abs(moving.dx);
+
+  // Speed up slightly
+  if (score > 5) moving.dx = (moving.dx > 0 ? 1 : -1) * (2.5 + score * 0.15);
+
+  ctx.fillStyle = moving.color;
+  ctx.shadowColor = moving.color;
+  ctx.shadowBlur = 20;
+  roundRect(ctx, moving.x, moving.y, moving.width, BLOCK_H, 6);
+  ctx.shadowBlur = 0;
+
+  // Gem emoji on top moving block
+  ctx.font = '16px serif';
+  ctx.fillText('💎', moving.x + moving.width/2 - 8, moving.y - 4);
+
+  requestAnimationFrame(loop);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+start();
+</script>
+</body>
+</html>

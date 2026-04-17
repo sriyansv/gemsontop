@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Ride the Wave | Alpha GEMS</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#050510; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:'Orbitron',sans-serif; color:white; }
+    canvas { border:2px solid #00ffb3; border-radius:8px; box-shadow:0 0 40px rgba(0,255,179,0.4); }
+    h1 { color:#00ffb3; margin-bottom:10px; font-size:1.5rem; }
+    #sc3 { color:#ffd700; margin-bottom:10px; }
+    #msg3 { color:#9090cc; font-size:0.85rem; margin-bottom:10px; }
+    a.back { margin-top:20px; color:#00d4ff; text-decoration:none; font-size:0.9rem; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <h1>🏄 RIDE THE WAVE</h1>
+  <div id="sc3">Score: 0</div>
+  <div id="msg3">Space / Click to jump!</div>
+  <canvas id="c" width="480" height="300"></canvas>
+  <a class="back" href="../index.html">← Back</a>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const scEl = document.getElementById('sc3');
+const msgEl = document.getElementById('msg3');
+
+let gem, obstacles, score4, speed, gameOver4, frame, bgX;
+
+function init4() {
+  gem = { x: 80, y: H/2, vy: 0, r: 18 };
+  obstacles = []; score4 = 0; speed = 3.5; frame = 0; bgX = 0; gameOver4 = false;
+  scEl.textContent = 'Score: 0';
+  msgEl.textContent = 'Space / Click to jump!';
+  loop4();
+}
+
+function jump() {
+  if (gameOver4) { init4(); return; }
+  gem.vy = -7;
+}
+
+document.addEventListener('keydown', e => { if (e.key === ' ') jump(); });
+canvas.addEventListener('click', jump);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); jump(); });
+
+function spawnObstacle() {
+  const isRed = Math.random() > 0.4;
+  const h = 30 + Math.random() * 50;
+  const y = H - 30 - h - Math.random() * 60;
+  obstacles.push({ x: W + 20, y, w: 22, h, isRed, label: isRed ? '📉' : '📈' });
+}
+
+function loop4() {
+  frame++;
+  ctx.clearRect(0, 0, W, H);
+
+  // Scrolling bg grid
+  bgX -= speed * 0.5;
+  ctx.strokeStyle = 'rgba(0,255,179,0.05)';
+  for (let i = 0; i < W + 40; i += 40) {
+    ctx.beginPath(); ctx.moveTo((i + bgX) % W, 0); ctx.lineTo((i + bgX) % W, H); ctx.stroke();
+  }
+  for (let i = 0; i < H; i += 40) {
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke();
+  }
+
+  // Ground wave
+  ctx.beginPath();
+  ctx.moveTo(0, H - 20);
+  for (let x = 0; x < W; x += 5) {
+    ctx.lineTo(x, H - 20 + Math.sin((x + frame * speed) * 0.05) * 8);
+  }
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  ctx.fillStyle = 'rgba(0,255,179,0.15)';
+  ctx.fill();
+
+  if (!gameOver4) {
+    // Gravity
+    gem.vy += 0.35;
+    gem.y += gem.vy;
+    if (gem.y + gem.r > H - 20) { gem.y = H - 20 - gem.r; gem.vy = 0; }
+    if (gem.y - gem.r < 0) { gem.y = gem.r; gem.vy = 0; }
+
+    // Spawn obstacles
+    if (frame % Math.floor(90 - score4 * 0.5) === 0) spawnObstacle();
+
+    // Move obstacles
+    obstacles = obstacles.filter(o => o.x + o.w > -10);
+    obstacles.forEach(o => {
+      o.x -= speed;
+      // Draw candle
+      ctx.fillStyle = o.isRed ? 'rgba(255,80,80,0.85)' : 'rgba(0,255,100,0.85)';
+      ctx.shadowColor = o.isRed ? '#ff5050' : '#00ff64';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(o.x, o.y, o.w, o.h);
+      ctx.shadowBlur = 0;
+      ctx.font = '18px serif';
+      ctx.fillText(o.label, o.x, o.y - 4);
+
+      // Collect green
+      if (!o.isRed && !o.collected &&
+          gem.x + gem.r > o.x && gem.x - gem.r < o.x + o.w &&
+          gem.y + gem.r > o.y && gem.y - gem.r < o.y + o.h) {
+        o.collected = true; score4 += 5;
+        scEl.textContent = 'Score: ' + score4;
+        speed = Math.min(9, 3.5 + score4 * 0.02);
+      }
+
+      // Crash red
+      if (o.isRed &&
+          gem.x + gem.r - 6 > o.x && gem.x - gem.r + 6 < o.x + o.w &&
+          gem.y + gem.r - 6 > o.y && gem.y - gem.r + 6 < o.y + o.h) {
+        gameOver4 = true;
+      }
+    });
+
+    score4 += 0.02;
+    scEl.textContent = 'Score: ' + Math.floor(score4);
+  }
+
+  // Draw gem
+  ctx.font = '32px serif';
+  ctx.fillText('💎', gem.x - 16, gem.y + 12);
+
+  // Velocity trail
+  if (gem.vy < -2) { ctx.font = '14px serif'; ctx.fillText('⬆️', gem.x - 8, gem.y + 28); }
+
+  if (gameOver4) {
+    ctx.fillStyle = 'rgba(5,5,16,0.85)'; ctx.fillRect(0,0,W,H);
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 22px Orbitron'; ctx.fillStyle = '#ff5050';
+    ctx.fillText('LIQUIDATED 💀', W/2, H/2 - 20);
+    ctx.font = '15px Orbitron'; ctx.fillStyle = '#ffd700';
+    ctx.fillText('Score: ' + Math.floor(score4), W/2, H/2 + 15);
+    ctx.font = '12px Orbitron'; ctx.fillStyle = '#9090cc';
+    ctx.fillText('Click to retry', W/2, H/2 + 45);
+    ctx.textAlign = 'left';
+  }
+
+  requestAnimationFrame(loop4);
+}
+
+init4();
+</script>
+</body>
+</html>
