@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Enter the GEM Cave 3D | Alpha GEMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gem:#7b2fff;--gem2:#00d4ff;--gold:#ffd700;--danger:#ff3a5c;--success:#00ffb3}
+html,body{height:100%;width:100%;overflow:hidden;background:#000;font-family:'Rajdhani',sans-serif;color:#fff;user-select:none;-webkit-tap-highlight-color:transparent}
+canvas#three-canvas{display:block;position:fixed;inset:0;z-index:1}
+
+.ui-layer{position:fixed;inset:0;z-index:10;pointer-events:none}
+.ui-layer > *{pointer-events:auto}
+
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,rgba(10,5,30,0.8) 0%,rgba(0,0,0,0.92) 100%);opacity:0;pointer-events:none;transition:opacity 0.5s;z-index:20;backdrop-filter:blur(6px)}
+.screen.active{opacity:1;pointer-events:auto}
+.panel{background:linear-gradient(145deg,rgba(20,10,50,0.95),rgba(8,4,25,0.95));border:1px solid rgba(123,47,255,0.5);border-radius:20px;padding:28px 24px;max-width:540px;width:100%;box-shadow:0 0 60px rgba(123,47,255,0.4);text-align:center;max-height:92vh;overflow-y:auto;position:relative}
+.panel h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.6rem,5vw,2.4rem);background:linear-gradient(135deg,#fff 20%,var(--gem2) 60%,var(--gem));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:3px;margin-bottom:14px;line-height:1.1}
+.panel h2{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,3vw,1.3rem);color:var(--gem2);margin-bottom:12px;letter-spacing:2px}
+.panel p{color:#c8c8ea;line-height:1.55;margin-bottom:14px;font-size:clamp(0.9rem,2.2vw,1rem)}
+.tagline{font-size:0.75rem;letter-spacing:5px;color:var(--gem2);text-transform:uppercase;margin-bottom:10px;font-weight:700}
+
+#introPanel img.logo{width:clamp(80px,18vw,110px);filter:drop-shadow(0 0 30px rgba(123,47,255,0.9));animation:logoFloat 3s ease-in-out infinite;margin-bottom:14px}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+
+.char-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+@media(max-width:480px){.char-grid{grid-template-columns:repeat(3,1fr);gap:8px}}
+.char{background:linear-gradient(145deg,rgba(40,20,80,0.6),rgba(15,8,40,0.6));border:2px solid rgba(123,47,255,0.3);border-radius:14px;padding:8px 4px;cursor:pointer;transition:all 0.25s;text-align:center;overflow:hidden}
+.char:hover{border-color:var(--gem2);transform:translateY(-4px) scale(1.03);box-shadow:0 8px 24px rgba(0,212,255,0.3)}
+.char img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;margin-bottom:4px}
+.char .name{font-size:0.7rem;font-weight:700;color:#fff;letter-spacing:1px;font-family:'Orbitron',sans-serif}
+.char-other{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(123,47,255,0.25));display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:90px}
+.char-other .icon{font-size:2rem;margin-bottom:2px}
+
+.name-input{width:100%;padding:14px 16px;background:rgba(8,4,20,0.9);border:2px solid rgba(123,47,255,0.5);border-radius:12px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:1.05rem;margin:10px 0;outline:none;font-weight:700;letter-spacing:2px;text-align:center;text-transform:uppercase}
+.name-input:focus{border-color:var(--gem2);box-shadow:0 0 20px rgba(0,212,255,0.3)}
+
+.btn{background:linear-gradient(135deg,var(--gem),var(--gem2));border:none;color:#fff;padding:12px 24px;border-radius:30px;font-weight:900;font-family:'Orbitron',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 24px rgba(123,47,255,0.5);letter-spacing:2px;margin:4px;text-transform:uppercase}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,212,255,0.7)}
+.btn:active{transform:translateY(0) scale(0.97)}
+.btn-ghost{background:transparent;border:2px solid var(--gem2);color:var(--gem2)}
+.btn-ghost:hover{background:var(--gem2);color:#000}
+.btn-danger{background:linear-gradient(135deg,#ff3a5c,#ff8040)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#ff9040);color:#000}
+.btn-stack{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.btn-stack .btn{width:100%;margin:0}
+
+.dialogue{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:min(640px,92vw);background:linear-gradient(145deg,rgba(10,5,28,0.97),rgba(6,2,18,0.98));border:1px solid var(--gem2);border-radius:18px;padding:16px 22px 22px;z-index:25;opacity:0;transition:all 0.4s;box-shadow:0 0 40px rgba(0,212,255,0.3);pointer-events:auto;cursor:pointer}
+.dialogue.active{opacity:1;transform:translate(-50%,0)}
+.dialogue.hidden{opacity:0;transform:translate(-50%,20px);pointer-events:none}
+.dlg-speaker{font-family:'Orbitron',sans-serif;font-size:0.78rem;color:var(--gold);letter-spacing:4px;margin-bottom:8px;text-transform:uppercase;font-weight:900;display:flex;align-items:center;gap:10px}
+.dlg-speaker::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.dlg-text{font-size:clamp(0.95rem,2.4vw,1.1rem);line-height:1.5;color:#fff;min-height:1.5em;font-weight:500}
+.dlg-hint{position:absolute;right:18px;bottom:6px;font-size:0.65rem;color:var(--gem2);animation:blinker 1s infinite;letter-spacing:2px;font-family:'Orbitron',sans-serif}
+@keyframes blinker{50%{opacity:0.2}}
+
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.quiz-dot{width:34px;height:5px;background:rgba(123,47,255,0.2);border-radius:3px;transition:all 0.3s}
+.quiz-dot.active{background:var(--gem2);box-shadow:0 0 10px var(--gem2)}
+.quiz-dot.correct{background:var(--success);box-shadow:0 0 10px var(--success)}
+.quiz-dot.wrong{background:var(--danger);box-shadow:0 0 10px var(--danger)}
+.quiz-q{font-size:clamp(1rem,2.8vw,1.2rem);line-height:1.5;margin:12px 0 18px;color:#fff;font-weight:600;font-family:'Orbitron',sans-serif}
+.quiz-opt{display:block;width:100%;background:linear-gradient(145deg,rgba(30,15,60,0.7),rgba(15,8,40,0.7));border:2px solid rgba(123,47,255,0.3);color:#fff;padding:13px 16px;border-radius:12px;margin:8px 0;cursor:pointer;text-align:left;font-family:'Rajdhani',sans-serif;font-size:0.98rem;transition:all 0.2s;font-weight:600}
+.quiz-opt:hover{border-color:var(--gem2);background:rgba(0,212,255,0.12);transform:translateX(6px)}
+.quiz-opt.correct{background:rgba(0,255,179,0.25);border-color:var(--success);color:var(--success)}
+.quiz-opt.wrong{background:rgba(255,58,92,0.25);border-color:var(--danger);color:var(--danger)}
+
+.dance-ui{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:25;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:none}
+.dance-prompt{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,3vw,1.5rem);color:var(--gold);letter-spacing:4px;text-shadow:0 0 20px var(--gold);background:rgba(0,0,0,0.5);padding:10px 24px;border-radius:30px;border:1px solid var(--gold)}
+.dance-keys{display:flex;gap:10px;pointer-events:auto}
+.dance-key{width:65px;height:65px;background:linear-gradient(145deg,rgba(40,20,80,0.9),rgba(15,8,40,0.9));border:3px solid var(--gem2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;transition:all 0.08s;cursor:pointer;box-shadow:0 4px 20px rgba(0,212,255,0.3)}
+.dance-key.hit{background:var(--success);border-color:var(--success);transform:scale(1.2);box-shadow:0 0 30px var(--success)}
+.dance-key.miss{background:var(--danger);border-color:var(--danger);animation:shake 0.3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.dance-bar{width:min(400px,85vw);height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+.dance-bar-fill{height:100%;background:linear-gradient(90deg,var(--gem),var(--gem2),var(--gold));width:0%;transition:width 0.3s;box-shadow:0 0 15px var(--gem2)}
+.dance-score{font-family:'Orbitron',sans-serif;font-size:0.9rem;color:var(--gold);letter-spacing:3px}
+
+.top-hud{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:14px;align-items:center;pointer-events:none;flex-wrap:wrap;justify-content:center;padding:0 14px}
+.hud-badge{background:rgba(8,4,20,0.85);border:1px solid rgba(0,212,255,0.4);border-radius:20px;padding:6px 14px;font-family:'Orbitron',sans-serif;font-size:0.75rem;color:var(--gem2);letter-spacing:2px;backdrop-filter:blur(10px);font-weight:700}
+.hud-badge.gold{border-color:var(--gold);color:var(--gold)}
+
+.back-link{position:fixed;top:14px;left:14px;color:var(--gem2);text-decoration:none;font-size:0.8rem;background:rgba(8,4,20,0.85);padding:8px 14px;border-radius:20px;border:1px solid rgba(0,212,255,0.3);z-index:100;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-family:'Orbitron',sans-serif}
+
+.kick-overlay{position:fixed;inset:0;background:radial-gradient(circle at center,rgba(255,58,92,0.95) 0%,#000 70%);z-index:50;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.3s}
+.kick-overlay.active{opacity:1;pointer-events:auto}
+.kick-text{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(4rem,16vw,10rem);color:#fff;text-shadow:0 0 40px var(--danger),0 0 80px #fff;letter-spacing:8px;animation:kickPop 0.9s cubic-bezier(.2,1.6,.3,1)}
+@keyframes kickPop{0%{transform:scale(0) rotate(-45deg);opacity:0}50%{transform:scale(1.6) rotate(15deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+
+.flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60;transition:opacity 0.1s}
+.flash.active{opacity:0.9}
+
+.win-gem{font-size:clamp(4rem,12vw,7rem);animation:winSpin 3s linear infinite;filter:drop-shadow(0 0 40px var(--gold));margin-bottom:10px;display:inline-block}
+@keyframes winSpin{0%{transform:rotateY(0) scale(1)}50%{transform:rotateY(180deg) scale(1.2)}100%{transform:rotateY(360deg) scale(1)}}
+.end-emoji{font-size:clamp(3.5rem,10vw,5.5rem);margin-bottom:10px;animation:bounce 1s ease infinite;display:inline-block}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+.end-reason{font-size:0.9rem;color:#a0a0d0;margin:12px 0;line-height:1.5;font-style:italic;border-left:2px solid var(--gem2);padding-left:12px;text-align:left}
+
+#loading{position:fixed;inset:0;background:#000;z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity 0.6s}
+#loading.gone{opacity:0;pointer-events:none}
+.loader-gem{font-size:4rem;animation:spin 2s linear infinite;filter:drop-shadow(0 0 30px var(--gem))}
+@keyframes spin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+.loader-text{font-family:'Orbitron',sans-serif;letter-spacing:4px;color:var(--gem2);font-size:0.9rem}
+.loader-bar{width:240px;height:4px;background:rgba(123,47,255,0.2);border-radius:2px;overflow:hidden}
+.loader-bar-fill{height:100%;background:linear-gradient(90deg,var(--gem),var(--gem2));width:0%;transition:width 0.3s}
+.loader-status{font-size:0.7rem;color:#9090cc;font-family:'Rajdhani',sans-serif;letter-spacing:1px;margin-top:4px;min-height:1em}
+
+.hidden{display:none!important}
+
+@media(max-width:480px){
+  .panel{padding:22px 18px}
+  .dialogue{bottom:12px;padding:12px 16px 18px}
+  .dance-ui{bottom:20px}
+  .dance-key{width:54px;height:54px;font-size:1.5rem}
+  .top-hud{top:8px}
+  .back-link{top:8px;left:8px;font-size:0.7rem;padding:6px 10px}
+}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loader-gem">💎</div>
+  <div class="loader-text">ENTERING THE GEM REALM</div>
+  <div class="loader-bar"><div class="loader-bar-fill" id="loadFill"></div></div>
+  <div class="loader-status" id="loadStatus">Initializing...</div>
+</div>
+
+<a href="../index.html" class="back-link">← HOME</a>
+
+<canvas id="three-canvas"></canvas>
+
+<div class="ui-layer">
+
+  <div class="top-hud hidden" id="topHud">
+    <div class="hud-badge gold" id="hudPlayer">💎 PLAYER</div>
+    <div class="hud-badge" id="hudScene">SCENE</div>
+  </div>
+
+  <div class="screen active" id="introScreen">
+    <div class="panel" id="introPanel">
+      <img src="assets/logo.png" class="logo" alt="Alpha GEMS"/>
+      <div class="tagline">A 3D GEM Cave Adventure</div>
+      <h1>ENTER THE CAVE</h1>
+      <p>The legendary <span style="color:var(--gold)">GEM Cave</span> stands before you.<br/>But only the worthy may enter.</p>
+      <p style="color:var(--danger);font-weight:700">⚠ SAFZ guards the entrance</p>
+      <div class="btn-stack">
+        <button class="btn" onclick="Game.go('charSelect')">▶ BEGIN QUEST</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="charSelectScreen">
+    <div class="panel">
+      <div class="tagline">Select Identity</div>
+      <h1>WHO ARE YOU?</h1>
+      <p>Pick a GEM team member, or enter as a stranger.</p>
+      <div class="char-grid" id="charGrid"></div>
+      <div id="nameInputWrap" class="hidden">
+        <input type="text" class="name-input" id="nameInput" placeholder="ENTER YOUR NAME" maxlength="12"/>
+        <button class="btn btn-gold" onclick="Game.confirmStranger()">▶ ENTER THE VALLEY</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="quizScreen">
+    <div class="panel">
+      <div class="quiz-progress" id="quizProgress"></div>
+      <div class="tagline">Safz's Trial</div>
+      <h2 id="quizTitle">QUIZ 1/5</h2>
+      <div class="quiz-q" id="quizQuestion"></div>
+      <div id="quizOpts"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="choiceScreen">
+    <div class="panel">
+      <div class="tagline">SAFZ BLOCKS YOUR PATH</div>
+      <h1>WHAT DO YOU SAY?</h1>
+      <div class="btn-stack">
+        <button class="btn" onclick="Game.choose(1)">"I wanna enter the cave 💎"</button>
+        <button class="btn btn-danger" onclick="Game.choose(2)">"I wanna kick you 🦵"</button>
+        <button class="btn btn-ghost" onclick="Game.choose(3)">"I wanna dance with you 💃"</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="memberScreen">
+    <div class="panel" id="memberPanel"></div>
+  </div>
+
+  <div class="screen" id="endScreen">
+    <div class="panel" id="endPanel"></div>
+  </div>
+
+  <div class="dialogue hidden" id="dialogue">
+    <div class="dlg-speaker" id="dlgSpeaker">SAFZ</div>
+    <div class="dlg-text" id="dlgText"></div>
+    <div class="dlg-hint">▼ TAP</div>
+  </div>
+
+  <div class="dance-ui hidden" id="danceUI">
+    <div class="dance-prompt" id="dancePrompt">🎵 DANCE 🎵</div>
+    <div class="dance-bar"><div class="dance-bar-fill" id="danceBarFill"></div></div>
+    <div class="dance-score" id="danceScore">SCORE: 0</div>
+    <div class="dance-keys" id="danceKeys"></div>
+  </div>
+
+  <div class="kick-overlay" id="kickOverlay"><div class="kick-text">BOOM!</div></div>
+  <div class="flash" id="flash"></div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// Fallback to unpkg if cloudflare fails
+if(typeof THREE === 'undefined'){
+  document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+}
+</script>
+<script>
+// Final fallback check
+if(typeof THREE === 'undefined'){
+  document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+}
+</script>
+
+<script>
+/* =========================================================================
+   GEM CAVE 3D — FINAL BULLETPROOF VERSION
+   ========================================================================= */
+
+const TEAM = [
+  {name:'Jampzey',img:'assets/jampzey.png'},
+  {name:'Pix',img:'assets/pix.png'},
+  {name:'Tulip',img:'assets/tulip.png'},
+  {name:'Meiv',img:'assets/meiv.png'},
+  {name:'Zera',img:'assets/zera.png'},
+  {name:'Shaq',img:'assets/shaq.png'},
+  {name:'Emma',img:'assets/emma.png'}
+];
+const SAFZ_IMG = 'assets/safz.png';
+const LOGO_IMG = 'assets/logo.png';
+
+const QUIZ_POOL = [
+  {q:"What does 'WL' stand for in crypto?",opts:["Wallet Locker","Whitelist","Web Ledger","Wild Launch"],a:1},
+  {q:"What's a 'rug pull'?",opts:["Farming strategy","Devs abandon project & steal funds","NFT trait","Profit taking"],a:1},
+  {q:"What does 'HODL' mean?",opts:["Hold On for Dear Life","High Output Data Link","Hash Oracle","Hidden Ownership"],a:0},
+  {q:"Ethereum's native token?",opts:["BTC","ETH","SOL","BNB"],a:1},
+  {q:"What's an 'airdrop'?",opts:["Type of staking","Free tokens to holders","Rug tactic","Buying dip"],a:1},
+  {q:"What does 'gm' mean?",opts:["Good Money","Gas Meter","Good Morning","Genesis Mint"],a:2},
+  {q:"What's a 'presale'?",opts:["Product preorder","Early token sale pre-launch","Pre-registration","Token burn"],a:1},
+  {q:"Largest crypto by market cap?",opts:["Ethereum","Solana","Bitcoin","XRP"],a:2},
+  {q:"What does 'DYOR' mean?",opts:["Do Your Own Research","Drop Your Own Rewards","Deflate Returns","Diamond Roadmap"],a:0},
+  {q:"What's an SBT?",opts:["Secure Bank Transfer","Soulbound Token","Staked BTC","Binary Token"],a:1},
+  {q:"What is 'FUD'?",opts:["Fully Underwater","Fear Uncertainty Doubt","Fast Delta","Fractional Utility"],a:1},
+  {q:"What's 'NGMI'?",opts:["Not Gonna Make It","New Genesis Minting","No Gas Mempool","Next Gen Meme"],a:0}
+];
+
+let scene, camera, renderer, clock;
+let crystals = [];
+let logoMesh, particles;
+let safzSprite, playerSprite, memberSprite, safzAura, memberAura;
+let torches = [];
+const loadedTextures = {};
+let cameraPos = new THREE.Vector3(0, 3.5, 12);
+let cameraTarget = new THREE.Vector3(0, 2, -4);
+
+function makeFallbackTexture(label){
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 128;
+  const ctx = c.getContext('2d');
+  const grd = ctx.createLinearGradient(0,0,128,128);
+  grd.addColorStop(0,'#7b2fff');
+  grd.addColorStop(1,'#00d4ff');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0,0,128,128);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 60px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label||'💎', 64, 64);
+  const tex = new THREE.Texture(c);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function preloadTexture(path){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    const timeout = setTimeout(()=>{
+      console.warn('Texture timeout:', path);
+      resolve(makeFallbackTexture());
+    }, 5000);
+    img.onload = ()=>{
+      clearTimeout(timeout);
+      try {
+        const tex = new THREE.Texture(img);
+        tex.needsUpdate = true;
+        resolve(tex);
+      } catch(e){
+        console.warn('Texture create error:', e);
+        resolve(makeFallbackTexture());
+      }
+    };
+    img.onerror = ()=>{
+      clearTimeout(timeout);
+      console.warn('Texture load failed:', path);
+      resolve(makeFallbackTexture());
+    };
+    img.src = path;
+  });
+}
+
+async function preloadAllAssets(onProgress){
+  const paths = [LOGO_IMG, SAFZ_IMG, ...TEAM.map(t=>t.img)];
+  let loaded = 0;
+  const total = paths.length;
+  for(const path of paths){
+    const tex = await preloadTexture(path);
+    loadedTextures[path] = tex;
+    loaded++;
+    if(onProgress) onProgress(loaded/total, path);
+  }
+}
+
+function getTex(path){
+  return loadedTextures[path] || makeFallbackTexture();
+}
+
+function initThree(){
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050210, 0.035);
+
+  camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 200);
+  camera.position.copy(cameraPos);
+
+  renderer = new THREE.WebGLRenderer({canvas:document.getElementById('three-canvas'),antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 1);
+
+  clock = new THREE.Clock();
+
+  scene.add(new THREE.AmbientLight(0x3a2060, 0.5));
+
+  const purpleLight = new THREE.PointLight(0x7b2fff, 2.5, 25);
+  purpleLight.position.set(-4, 4, 2);
+  scene.add(purpleLight);
+
+  const cyanLight = new THREE.PointLight(0x00d4ff, 2.5, 25);
+  cyanLight.position.set(4, 4, 2);
+  scene.add(cyanLight);
+
+  const goldLight = new THREE.PointLight(0xffd700, 1.5, 20);
+  goldLight.position.set(0, 6, 5);
+  scene.add(goldLight);
+
+  buildCaveWorld();
+  buildCharacters();
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+function buildCaveWorld(){
+  const groundGeo = new THREE.PlaneGeometry(60, 60, 24, 24);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color:0x1a0a35, roughness:0.9, metalness:0.2,
+    emissive:0x2a0850, emissiveIntensity:0.15
+  });
+  const positions = groundGeo.attributes.position;
+  for(let i=0;i<positions.count;i++){
+    const x = positions.getX(i), z = positions.getY(i);
+    const dist = Math.sqrt(x*x+z*z);
+    if(dist > 4) positions.setZ(i, Math.sin(x*0.5)*Math.cos(z*0.5)*0.3 + Math.random()*0.2);
+  }
+  groundGeo.computeVertexNormals();
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI/2;
+  scene.add(ground);
+
+  const caveGeo = new THREE.SphereGeometry(22, 24, 24, 0, Math.PI*2, 0, Math.PI/2);
+  const caveMat = new THREE.MeshStandardMaterial({
+    color:0x0a0420, roughness:1, metalness:0.1,
+    side:THREE.BackSide, emissive:0x1a0840, emissiveIntensity:0.25
+  });
+  const cvPos = caveGeo.attributes.position;
+  for(let i=0;i<cvPos.count;i++){
+    const x=cvPos.getX(i),y=cvPos.getY(i),z=cvPos.getZ(i);
+    const n = Math.sin(x*2)*Math.cos(y*2)*Math.sin(z*2)*0.5;
+    cvPos.setXYZ(i, x+n*0.3, y+n*0.3, z+n*0.3);
+  }
+  caveGeo.computeVertexNormals();
+  scene.add(new THREE.Mesh(caveGeo, caveMat));
+
+  const archGroup = new THREE.Group();
+  archGroup.position.set(0, 0, -10);
+  scene.add(archGroup);
+
+  const pillarMat = new THREE.MeshStandardMaterial({
+    color:0x2a1050, roughness:0.6, metalness:0.4,
+    emissive:0x5510aa, emissiveIntensity:0.3
+  });
+  const pillarGeo = new THREE.CylinderGeometry(0.4, 0.6, 8, 8);
+  const pillarL = new THREE.Mesh(pillarGeo, pillarMat);
+  pillarL.position.set(-3, 4, 0);
+  archGroup.add(pillarL);
+  const pillarR = pillarL.clone();
+  pillarR.position.set(3, 4, 0);
+  archGroup.add(pillarR);
+
+  const archCurve = new THREE.TorusGeometry(3, 0.5, 8, 16, Math.PI);
+  const archTop = new THREE.Mesh(archCurve, pillarMat);
+  archTop.position.set(0, 8, 0);
+  archGroup.add(archTop);
+
+  const entrance = new THREE.Mesh(
+    new THREE.PlaneGeometry(5.5, 7),
+    new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.95})
+  );
+  entrance.position.set(0, 4, 0.3);
+  archGroup.add(entrance);
+
+  const glow = new THREE.Mesh(
+    new THREE.PlaneGeometry(5, 6.5),
+    new THREE.MeshBasicMaterial({color:0x7b2fff, transparent:true, opacity:0.3})
+  );
+  glow.position.set(0, 4, 0.1);
+  archGroup.add(glow);
+
+  const logoMat = new THREE.MeshBasicMaterial({map:getTex(LOGO_IMG), transparent:true, side:THREE.DoubleSide});
+  logoMesh = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), logoMat);
+  logoMesh.position.set(0, 10.5, 0);
+  archGroup.add(logoMesh);
+
+  const logoGlow = new THREE.Mesh(
+    new THREE.PlaneGeometry(4.5, 4.5),
+    new THREE.MeshBasicMaterial({color:0x7b2fff, transparent:true, opacity:0.35, blending:THREE.AdditiveBlending})
+  );
+  logoGlow.position.set(0, 10.5, -0.1);
+  archGroup.add(logoGlow);
+
+  const crystalGeo = new THREE.OctahedronGeometry(0.4, 0);
+  const crystalColors = [0x7b2fff, 0x00d4ff, 0xffd700, 0xff6fff, 0x00ffb3];
+  for(let i=0;i<22;i++){
+    const col = crystalColors[i % crystalColors.length];
+    const mat = new THREE.MeshStandardMaterial({
+      color:col, emissive:col, emissiveIntensity:0.6,
+      roughness:0.1, metalness:0.9,
+      transparent:true, opacity:0.85
+    });
+    const c = new THREE.Mesh(crystalGeo, mat);
+    const angle = (i/22) * Math.PI * 2;
+    const r = 6 + Math.random()*8;
+    c.position.set(Math.cos(angle)*r, 2+Math.random()*8, Math.sin(angle)*r - 3);
+    c.scale.setScalar(0.5 + Math.random()*1.2);
+    c.userData = {
+      baseY: c.position.y,
+      floatSpeed: 0.5+Math.random()*0.8,
+      floatAmp: 0.3+Math.random()*0.5,
+      rotSpeed: (Math.random()-0.5)*0.02
+    };
+    scene.add(c);
+    crystals.push(c);
+  }
+
+  for(let i=0;i<10;i++){
+    const h = 1 + Math.random()*2;
+    const col = crystalColors[Math.floor(Math.random()*crystalColors.length)];
+    const mat = new THREE.MeshStandardMaterial({
+      color:col, emissive:col, emissiveIntensity:0.5,
+      roughness:0.2, metalness:0.8, transparent:true, opacity:0.9
+    });
+    const c = new THREE.Mesh(new THREE.ConeGeometry(0.3+Math.random()*0.4, h, 6), mat);
+    const angle = Math.random()*Math.PI*2;
+    const r = 5 + Math.random()*8;
+    c.position.set(Math.cos(angle)*r, h/2, Math.sin(angle)*r - 2);
+    c.rotation.z = (Math.random()-0.5)*0.3;
+    scene.add(c);
+  }
+
+  for(let i=0;i<4;i++){
+    const angle = (i/4)*Math.PI*2 + Math.PI/4;
+    const r = 7;
+    const torch = new THREE.PointLight(0xff6040, 2, 12);
+    torch.position.set(Math.cos(angle)*r, 3, Math.sin(angle)*r);
+    scene.add(torch);
+    torches.push(torch);
+
+    const tMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.15, 8, 8),
+      new THREE.MeshBasicMaterial({color:0xffaa44})
+    );
+    tMesh.position.copy(torch.position);
+    scene.add(tMesh);
+  }
+
+  const pGeo = new THREE.BufferGeometry();
+  const pCount = 150;
+  const pPositions = new Float32Array(pCount * 3);
+  for(let i=0;i<pCount;i++){
+    pPositions[i*3] = (Math.random()-0.5)*30;
+    pPositions[i*3+1] = Math.random()*15;
+    pPositions[i*3+2] = (Math.random()-0.5)*30;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+  const pMat = new THREE.PointsMaterial({
+    color:0xccaaff, size:0.05, transparent:true, opacity:0.6,
+    blending:THREE.AdditiveBlending
+  });
+  particles = new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+}
+
+function buildCharacters(){
+  const safzMat = new THREE.SpriteMaterial({map:getTex(SAFZ_IMG), transparent:true});
+  safzSprite = new THREE.Sprite(safzMat);
+  safzSprite.scale.set(2.4, 2.4, 1);
+  safzSprite.position.set(0, 1.6, -5);
+  safzSprite.visible = false;
+  scene.add(safzSprite);
+
+  safzAura = new THREE.Mesh(
+    new THREE.CircleGeometry(1.5, 24),
+    new THREE.MeshBasicMaterial({color:0xff3a5c, transparent:true, opacity:0.3, blending:THREE.AdditiveBlending})
+  );
+  safzAura.position.set(0, 1.6, -5.2);
+  safzAura.visible = false;
+  scene.add(safzAura);
+}
+
+function setPlayerSprite(imgPath){
+  if(playerSprite){scene.remove(playerSprite);}
+  const mat = new THREE.SpriteMaterial({map:getTex(imgPath), transparent:true});
+  playerSprite = new THREE.Sprite(mat);
+  playerSprite.scale.set(1.8, 1.8, 1);
+  playerSprite.position.set(0, 1.4, 7);
+  playerSprite.userData = {baseY:1.4};
+  scene.add(playerSprite);
+}
+
+function setMemberSprite(imgPath){
+  if(memberSprite){
+    scene.remove(memberSprite);
+    if(memberAura){scene.remove(memberAura); memberAura=null;}
+  }
+  const mat = new THREE.SpriteMaterial({map:getTex(imgPath), transparent:true});
+  memberSprite = new THREE.Sprite(mat);
+  memberSprite.scale.set(2, 2, 1);
+  memberSprite.position.set(6, 1.5, -2);
+  scene.add(memberSprite);
+
+  memberAura = new THREE.Mesh(
+    new THREE.CircleGeometry(1.3, 24),
+    new THREE.MeshBasicMaterial({color:0x7b2fff, transparent:true, opacity:0.35, blending:THREE.AdditiveBlending})
+  );
+  memberAura.position.set(6, 1.5, -2.1);
+  scene.add(memberAura);
+}
+
+function removeMemberSprite(){
+  if(memberSprite){scene.remove(memberSprite); memberSprite=null;}
+  if(memberAura){scene.remove(memberAura); memberAura=null;}
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  crystals.forEach((c,i)=>{
+    c.position.y = c.userData.baseY + Math.sin(t*c.userData.floatSpeed + i)*c.userData.floatAmp;
+    c.rotation.y += c.userData.rotSpeed;
+    c.rotation.x += c.userData.rotSpeed*0.7;
+  });
+
+  torches.forEach((l,i)=>{
+    if(!l.userData.disco){
+      l.intensity = 1.6 + Math.sin(t*8 + i)*0.3 + Math.random()*0.2;
+    }
+  });
+
+  if(logoMesh){
+    logoMesh.rotation.z = Math.sin(t*0.8)*0.08;
+    logoMesh.position.y = 10.5 + Math.sin(t*1.2)*0.25;
+  }
+
+  if(particles){
+    const pos = particles.geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      pos.setY(i, pos.getY(i) + 0.005);
+      if(pos.getY(i) > 15) pos.setY(i, 0);
+    }
+    pos.needsUpdate = true;
+    particles.rotation.y += 0.0003;
+  }
+
+  camera.position.lerp(cameraPos, 0.05);
+  camera.lookAt(cameraTarget);
+
+  if(playerSprite && playerSprite.userData.walking){
+    playerSprite.position.y = playerSprite.userData.baseY + Math.abs(Math.sin(t*8))*0.15;
+  }
+
+  if(safzSprite && safzSprite.userData.shake){
+    safzSprite.position.x = Math.sin(t*30)*0.1;
+  }
+
+  renderer.render(scene, camera);
+}
+
+const Game = {
+  player:null, playerIsTeam:false,
+  memberIdx:0, membersPassed:0, membersInCheck:[],
+  quizIdx:0, quizCorrect:0, quizSet:[],
+  danceRound:0, danceScore:0, danceBeats:8, currentBeat:null,
+
+  init(){
+    const grid = document.getElementById('charGrid');
+    TEAM.forEach(m=>{
+      const el = document.createElement('div');
+      el.className='char';
+      el.innerHTML = `<img src="${m.img}" alt="${m.name}"/><div class="name">${m.name}</div>`;
+      el.onclick = ()=>this.selectTeam(m);
+      grid.appendChild(el);
+    });
+    const other = document.createElement('div');
+    other.className='char char-other';
+    other.innerHTML = `<div class="icon">❓</div><div class="name">OTHER</div>`;
+    other.onclick = ()=>{
+      document.getElementById('nameInputWrap').classList.remove('hidden');
+      document.getElementById('nameInput').focus();
+      document.querySelectorAll('.char').forEach(c=>c.style.opacity='0.4');
+      other.style.opacity='1';
+    };
+    grid.appendChild(other);
+
+    document.getElementById('nameInput').addEventListener('keydown',e=>{
+      if(e.key==='Enter')this.confirmStranger();
+    });
+  },
+
+  go(screen){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    if(screen){
+      const s = document.getElementById(screen+'Screen');
+      if(s)s.classList.add('active');
+    }
+  },
+
+  hud(sceneText){
+    document.getElementById('topHud').classList.remove('hidden');
+    document.getElementById('hudPlayer').textContent = `💎 ${this.player.name}`;
+    document.getElementById('hudScene').textContent = sceneText;
+  },
+
+  selectTeam(m){
+    this.player = {name:m.name.toUpperCase(), img:m.img};
+    this.playerIsTeam = true;
+    this.startStory();
+  },
+
+  confirmStranger(){
+    const name = document.getElementById('nameInput').value.trim();
+    if(!name){document.getElementById('nameInput').focus();return;}
+    const av = TEAM[Math.floor(Math.random()*TEAM.length)];
+    this.player = {name:name.toUpperCase(), img:av.img};
+    this.playerIsTeam = false;
+    this.startStory();
+  },
+
+  async startStory(){
+    this.go(null);
+    setPlayerSprite(this.player.img);
+    cameraPos.set(0, 3.5, 12);
+    cameraTarget.set(0, 2, 0);
+    this.hud('APPROACHING THE CAVE');
+    await this.delay(400);
+    await this.walkPlayer(0, -1, 3000);
+    safzSprite.visible = true;
+    safzAura.visible = true;
+    safzSprite.scale.set(0.01, 0.01, 1);
+    await this.tween(safzSprite.scale, {x:2.4, y:2.4}, 600);
+    cameraPos.set(0, 2.5, 4);
+    cameraTarget.set(0, 2, -3);
+    await this.delay(600);
+    this.safzGreeting();
+  },
+
+  walkPlayer(toX, toZ, duration){
+    return new Promise(resolve=>{
+      if(!playerSprite){resolve();return;}
+      playerSprite.userData.walking = true;
+      const start = {x:playerSprite.position.x, z:playerSprite.position.z};
+      const startTime = performance.now();
+      const step = ()=>{
+        const elapsed = performance.now() - startTime;
+        const t = Math.min(elapsed/duration, 1);
+        playerSprite.position.x = start.x + (toX-start.x)*t;
+        playerSprite.position.z = start.z + (toZ-start.z)*t;
+        cameraPos.z = 10 - t*7;
+        cameraPos.y = 3 - t*0.5;
+        cameraTarget.z = -4 - t*1;
+        if(t<1) requestAnimationFrame(step);
+        else {
+          playerSprite.userData.walking = false;
+          resolve();
+        }
+      };
+      step();
+    });
+  },
+
+  tween(obj, target, duration){
+    return new Promise(resolve=>{
+      const start = {};
+      for(const k in target) start[k] = obj[k];
+      const st = performance.now();
+      const step = ()=>{
+        const e = performance.now()-st;
+        const t = Math.min(e/duration, 1);
+        const eased = 1-(1-t)*(1-t);
+        for(const k in target) obj[k] = start[k] + (target[k]-start[k])*eased;
+        if(t<1) requestAnimationFrame(step);
+        else resolve();
+      };
+      step();
+    });
+  },
+
+  delay(ms){return new Promise(r=>setTimeout(r,ms));},
+
+  safzGreeting(){
+    if(this.playerIsTeam){
+      this.dialogue('SAFZ', `Hey ${this.player.name}... you're already a GEM waifu 💎`, ()=>{
+        this.dialogue('SAFZ', `You don't need my permission to enter the cave...`, ()=>{
+          this.dialogue('SAFZ', `BUT — you need to dance with me first! 💃🕺`, ()=>{
+            this.dialogue(this.player.name, `Ok Safz... let's DANCE! 🔥`, ()=>{
+              this.startDance();
+            });
+          });
+        });
+      });
+    } else {
+      this.dialogue('SAFZ', `Hey! Where do you think you're going? 🤨`, ()=>{
+        this.go('choice');
+      });
+    }
+  },
+
+  choose(opt){
+    this.go(null);
+    if(opt===1){
+      this.dialogue('SAFZ', `Hah. You think it's that easy? 😏`, ()=>{
+        this.dialogue('SAFZ', `I'll test you. Answer my quiz first. 🧠`, ()=>{
+          this.startQuiz();
+        });
+      });
+    } else if(opt===2){
+      this.dialogue('SAFZ', `You wanna kick ME? 😂`, ()=>{
+        this.dialogue('SAFZ', `Bold. Misguided. BYE. 🦵`, ()=>{
+          safzSprite.userData.shake = true;
+          setTimeout(()=>{safzSprite.userData.shake=false;},400);
+          this.delay(600).then(()=>this.kickOut('Bold move. Bad move. You picked a fight with the founder.'));
+        });
+      });
+    } else {
+      this.dialogue('SAFZ', `Oh? A stranger wants to dance? 👀`, ()=>{
+        this.dialogue('SAFZ', `Brave. I respect it. Let's GO! 💃`, ()=>{
+          this.startDance();
+        });
+      });
+    }
+  },
+
+  dialogue(speaker, text, cb){
+    const dlg = document.getElementById('dialogue');
+    dlg.classList.remove('hidden');
+    dlg.classList.add('active');
+    document.getElementById('dlgSpeaker').textContent = speaker;
+    const el = document.getElementById('dlgText');
+    el.textContent = '';
+    let i = 0;
+    let finished = false;
+    const finish = ()=>{
+      if(finished) return;
+      finished = true;
+      el.textContent = text;
+      clearInterval(type);
+      const tap = ()=>{
+        dlg.removeEventListener('click', tap);
+        document.removeEventListener('keydown', onKey);
+        dlg.classList.add('hidden');
+        setTimeout(cb, 300);
+      };
+      const onKey = e=>{if(e.key===' '||e.key==='Enter')tap();};
+      dlg.addEventListener('click', tap);
+      document.addEventListener('keydown', onKey);
+    };
+    const type = setInterval(()=>{
+      if(i<=text.length){el.textContent = text.slice(0,i);i++;}
+      else finish();
+    }, 26);
+  },
+
+  startQuiz(){
+    this.hud('THE TRIAL');
+    this.quizIdx=0; this.quizCorrect=0;
+    this.quizSet = [...QUIZ_POOL].sort(()=>Math.random()-0.5).slice(0,5);
+    const prog = document.getElementById('quizProgress');
+    prog.innerHTML = this.quizSet.map(()=>'<div class="quiz-dot"></div>').join('');
+    cameraPos.set(0, 2.5, 3);
+    cameraTarget.set(0, 2, -4);
+    this.go('quiz');
+    this.showQuestion();
+  },
+  showQuestion(){
+    const q = this.quizSet[this.quizIdx];
+    document.getElementById('quizTitle').textContent = `QUESTION ${this.quizIdx+1} / ${this.quizSet.length}`;
+    document.getElementById('quizQuestion').textContent = q.q;
+    const opts = document.getElementById('quizOpts');
+    opts.innerHTML='';
+    q.opts.forEach((o,i)=>{
+      const b = document.createElement('button');
+      b.className='quiz-opt';
+      b.textContent = o;
+      b.onclick = ()=>this.answerQuiz(i, b);
+      opts.appendChild(b);
+    });
+    const dots = document.querySelectorAll('#quizProgress .quiz-dot');
+    dots.forEach((d,i)=>{if(i===this.quizIdx)d.classList.add('active');});
+  },
+  answerQuiz(i, btn){
+    const q = this.quizSet[this.quizIdx];
+    const correct = i===q.a;
+    btn.classList.add(correct?'correct':'wrong');
+    if(!correct){
+      document.querySelectorAll('.quiz-opt').forEach((b,j)=>{if(j===q.a)b.classList.add('correct');});
+    } else this.quizCorrect++;
+    document.querySelectorAll('.quiz-opt').forEach(b=>b.onclick=null);
+    const dot = document.querySelectorAll('#quizProgress .quiz-dot')[this.quizIdx];
+    dot.classList.add(correct?'correct':'wrong');
+    setTimeout(()=>{
+      this.quizIdx++;
+      if(this.quizIdx<this.quizSet.length) this.showQuestion();
+      else this.quizDone();
+    }, 1100);
+  },
+  quizDone(){
+    this.go(null);
+    if(this.quizCorrect>=3){
+      this.dialogue('SAFZ', `${this.quizCorrect}/5. You're not a total newbie. 🤔`, ()=>{
+        this.dialogue('SAFZ', `Now let's see if my team even knows you... 👀`, ()=>{
+          this.startMemberCheck();
+        });
+      });
+    } else {
+      this.dialogue('SAFZ', `${this.quizCorrect}/5? Rookie numbers. 📉`, ()=>{
+        this.dialogue('SAFZ', `NGMI. Come back when you've done your DYOR. 🦵`, ()=>{
+          this.kickOut(`Only ${this.quizCorrect}/5 correct. Safz wasn't impressed.`);
+        });
+      });
+    }
+  },
+
+  async startMemberCheck(){
+    this.hud('RECOGNITION TEST');
+    this.memberIdx=0; this.membersPassed=0;
+    this.membersInCheck = [...TEAM].sort(()=>Math.random()-0.5).slice(0,5);
+    await this.nextMember();
+  },
+
+  async nextMember(){
+    if(this.memberIdx>=5){this.memberCheckDone();return;}
+    const m = this.membersInCheck[this.memberIdx];
+
+    setMemberSprite(m.img);
+
+    await new Promise(resolve=>{
+      const startTime = performance.now();
+      const step = ()=>{
+        if(!memberSprite){resolve();return;}
+        const t = Math.min((performance.now()-startTime)/500, 1);
+        const x = 6 + (-1.5 - 6)*t;
+        memberSprite.position.x = x;
+        if(memberAura) memberAura.position.x = x;
+        if(t<1) requestAnimationFrame(step);
+        else resolve();
+      };
+      step();
+    });
+
+    const panel = document.getElementById('memberPanel');
+    panel.innerHTML = `
+      <div class="tagline">MEMBER ${this.memberIdx+1} / 5</div>
+      <h2>${m.name.toUpperCase()}</h2>
+      <p style="font-size:1.05rem;color:#fff">Safz asks: "Are you familiar with <span style="color:var(--gold);font-weight:700">${this.player.name}</span>?"</p>
+      <div id="ansBox" style="min-height:60px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,5vw,2.5rem);font-weight:900;letter-spacing:4px;margin:18px 0;opacity:0;transition:all 0.5s">...</div>
+      <div id="secretThought" style="font-size:0.85rem;color:var(--gold);font-style:italic;opacity:0;transition:opacity 0.5s;border:1px dashed var(--gold);border-radius:10px;padding:10px;background:rgba(255,215,0,0.08)"></div>
+    `;
+    this.go('member');
+
+    await this.delay(1400);
+    const isYes = Math.random() < 0.01;
+    const ansBox = document.getElementById('ansBox');
+    const secretBox = document.getElementById('secretThought');
+    ansBox.style.opacity = '1';
+    if(isYes){
+      ansBox.textContent = 'YES! 💎';
+      ansBox.style.color = 'var(--success)';
+      ansBox.style.textShadow = '0 0 30px var(--success)';
+      this.membersPassed++;
+      if(memberAura) memberAura.material.color.setHex(0x00ffb3);
+    } else {
+      ansBox.textContent = 'NO.';
+      ansBox.style.color = 'var(--danger)';
+      ansBox.style.textShadow = '0 0 30px var(--danger)';
+      if(memberAura) memberAura.material.color.setHex(0xff3a5c);
+      await this.delay(700);
+      const thoughts = [
+        `💭 (wait... that's my GEM from 2022... but nah, I'll play along)`,
+        `💭 (I literally DM'd them last week... but shhh)`,
+        `💭 (we were WL buddies... Safz is watching though)`,
+        `💭 (I know this person... Safz's game, I'll cover)`,
+        `💭 (that's my homie from the alpha chat... but ok)`,
+        `💭 (I see you bro/sis... act natural act natural)`
+      ];
+      secretBox.textContent = thoughts[Math.floor(Math.random()*thoughts.length)];
+      secretBox.style.opacity = '1';
+    }
+
+    await this.delay(2400);
+    this.go(null);
+
+    await new Promise(resolve=>{
+      if(!memberSprite){resolve();return;}
+      const exitStart = memberSprite.position.x;
+      const startTime = performance.now();
+      const step = ()=>{
+        if(!memberSprite){resolve();return;}
+        const t = Math.min((performance.now()-startTime)/400, 1);
+        const x = exitStart + (-6-exitStart)*t;
+        memberSprite.position.x = x;
+        if(memberAura) memberAura.position.x = x;
+        if(t<1) requestAnimationFrame(step);
+        else resolve();
+      };
+      step();
+    });
+    removeMemberSprite();
+
+    this.memberIdx++;
+    await this.delay(400);
+    this.nextMember();
+  },
+
+  memberCheckDone(){
+    if(this.membersPassed===0){
+      this.dialogue('SAFZ', `0 out of 5 know you. Not a single one. 😤`, ()=>{
+        this.dialogue('SAFZ', `Strangers don't enter the cave. 🦵`, ()=>{
+          this.kickOut('None of the team recognized you. The cave only opens for the known.');
+        });
+      });
+    } else {
+      this.dialogue('SAFZ', `${this.membersPassed}/5 vouched?? That's RARE! 🤯`, ()=>{
+        this.dialogue('SAFZ', `Against all odds... you've earned it. 💎`, ()=>{
+          this.winScene();
+        });
+      });
+    }
+  },
+
+  startDance(){
+    this.hud('💃 DANCE FLOOR 🕺');
+    this.danceRound=0; this.danceScore=0;
+    cameraPos.set(0, 3, 6);
+    cameraTarget.set(0, 2, -3);
+    torches.forEach(t=>{t.userData.disco = true;});
+
+    const keysDiv = document.getElementById('danceKeys');
+    const keys = ['←','↑','↓','→'];
+    keysDiv.innerHTML = keys.map(k=>`<div class="dance-key" data-k="${k}">${k}</div>`).join('');
+
+    document.getElementById('danceUI').classList.remove('hidden');
+    setTimeout(()=>this.nextBeat(), 700);
+
+    this.discoInterval = setInterval(()=>{
+      const colors = [0xff40ff, 0x00d4ff, 0xffd700, 0x00ffb3, 0x7b2fff];
+      torches.forEach(t=>{
+        t.color.setHex(colors[Math.floor(Math.random()*colors.length)]);
+        t.intensity = 3;
+      });
+      if(playerSprite){
+        playerSprite.material.rotation = (Math.random()-0.5)*0.3;
+        playerSprite.position.y = playerSprite.userData.baseY + Math.random()*0.3;
+      }
+      if(safzSprite){
+        safzSprite.material.rotation = (Math.random()-0.5)*0.3;
+      }
+    }, 300);
+  },
+
+  nextBeat(){
+    if(this.danceRound >= this.danceBeats){this.danceDone();return;}
+    const keys = ['←','↑','↓','→'];
+    const target = keys[Math.floor(Math.random()*keys.length)];
+    this.currentBeat = target;
+    document.getElementById('dancePrompt').innerHTML = `PRESS: <span style="font-size:1.6em;color:var(--success);text-shadow:0 0 20px var(--success)">${target}</span>`;
+
+    this.beatTimeout = setTimeout(()=>this.beatMiss(), 1400);
+    this.keyListener = e=>{
+      const map = {'ArrowLeft':'←','ArrowUp':'↑','ArrowDown':'↓','ArrowRight':'→','a':'←','w':'↑','s':'↓','d':'→'};
+      const k = map[e.key];
+      if(k) this.handleBeatInput(k);
+    };
+    document.addEventListener('keydown', this.keyListener);
+    document.querySelectorAll('.dance-key').forEach(el=>{
+      el.ontouchstart = el.onclick = (ev)=>{ev.preventDefault();this.handleBeatInput(el.dataset.k);};
+    });
+  },
+  handleBeatInput(k){
+    if(!this.currentBeat)return;
+    const el = [...document.querySelectorAll('.dance-key')].find(e=>e.dataset.k===k);
+    if(k===this.currentBeat){
+      if(el) el.classList.add('hit');
+      this.danceScore++;
+      document.getElementById('danceScore').textContent = 'SCORE: '+this.danceScore;
+    } else {
+      if(el) el.classList.add('miss');
+    }
+    setTimeout(()=>{if(el) el.classList.remove('hit','miss');}, 300);
+    this.cleanupBeat();
+    this.danceRound++;
+    document.getElementById('danceBarFill').style.width = (this.danceRound/this.danceBeats*100)+'%';
+    setTimeout(()=>this.nextBeat(), 400);
+  },
+  beatMiss(){
+    this.cleanupBeat();
+    this.danceRound++;
+    document.getElementById('danceBarFill').style.width = (this.danceRound/this.danceBeats*100)+'%';
+    setTimeout(()=>this.nextBeat(), 300);
+  },
+  cleanupBeat(){
+    this.currentBeat = null;
+    clearTimeout(this.beatTimeout);
+    document.removeEventListener('keydown', this.keyListener);
+  },
+  danceDone(){
+    clearInterval(this.discoInterval);
+    torches.forEach(t=>{t.color.setHex(0xff6040); t.intensity=2; t.userData.disco=false;});
+    if(playerSprite) playerSprite.material.rotation = 0;
+    if(safzSprite) safzSprite.material.rotation = 0;
+    document.getElementById('danceUI').classList.add('hidden');
+    const s = this.danceScore;
+    setTimeout(()=>{
+      if(s>=5){
+        this.dialogue('SAFZ', `${s}/8! YOU GOT MOVES! 🕺🔥`, ()=>{
+          if(this.playerIsTeam){
+            this.dialogue('SAFZ', `Welcome home, GEM. 💎`, ()=>this.winScene());
+          } else {
+            this.dialogue('SAFZ', `Dance earned you a test. Now let's see if my team knows you. 👀`, ()=>{
+              this.startMemberCheck();
+            });
+          }
+        });
+      } else {
+        this.dialogue('SAFZ', `${s}/8? Two left feet. 🦶`, ()=>{
+          if(this.playerIsTeam){
+            this.dialogue('SAFZ', `Still letting you in. Family is family. 💎`, ()=>this.winScene());
+          } else {
+            this.kickOut('You danced like a rugged token. Stranger, you are kicked.');
+          }
+        });
+      }
+    }, 400);
+  },
+
+  kickOut(reason){
+    this.flash();
+    document.getElementById('kickOverlay').classList.add('active');
+    if(playerSprite){
+      const startTime = performance.now();
+      const step = ()=>{
+        if(!playerSprite) return;
+        const t = (performance.now()-startTime)/800;
+        if(t<1){
+          playerSprite.position.z = 7 + t*15;
+          playerSprite.position.y = 1.4 + Math.sin(t*Math.PI)*3;
+          playerSprite.material.rotation = t*Math.PI*2;
+          requestAnimationFrame(step);
+        }
+      };
+      step();
+    }
+    setTimeout(()=>{
+      document.getElementById('kickOverlay').classList.remove('active');
+      this.endScreen('kicked', reason);
+    }, 1400);
+  },
+
+  winScene(){
+    cameraTarget.set(0, 4, -15);
+    cameraPos.set(0, 3, -3);
+    setTimeout(()=>this.endScreen('won'), 1800);
+  },
+
+  flash(){
+    const f = document.getElementById('flash');
+    f.classList.add('active');
+    setTimeout(()=>f.classList.remove('active'), 120);
+  },
+
+  endScreen(type, reason){
+    const panel = document.getElementById('endPanel');
+    if(type==='won'){
+      panel.innerHTML = `
+        <div class="win-gem">💎</div>
+        <div class="tagline">Welcome to the Cave</div>
+        <h1>YOU'RE A GEM</h1>
+        <p>The cave recognizes you, <span style="color:var(--gold);font-weight:700">${this.player.name}</span>.</p>
+        <p style="color:var(--gold);font-style:italic;font-size:1.1rem">"GEMs on Top. Always." — Safz</p>
+        <div class="btn-stack">
+          <button class="btn btn-gold" onclick="location.reload()">▶ PLAY AGAIN</button>
+          <a class="btn btn-ghost" href="../index.html" style="text-decoration:none;display:block">← BACK TO HOME</a>
+        </div>`;
+    } else {
+      panel.innerHTML = `
+        <div class="end-emoji">🦵</div>
+        <div class="tagline">REJECTED</div>
+        <h1>YOU GOT KICKED</h1>
+        <p>The cave remains closed, <span style="color:var(--danger);font-weight:700">${this.player.name}</span>.</p>
+        <p class="end-reason">${reason||'Better luck next time, degen.'}</p>
+        <div class="btn-stack">
+          <button class="btn btn-danger" onclick="location.reload()">▶ TRY AGAIN</button>
+          <a class="btn btn-ghost" href="../index.html" style="text-decoration:none;display:block">← BACK TO HOME</a>
+        </div>`;
+    }
+    this.go('end');
+  }
+};
+
+/* =========================================================================
+   BOOT — GUARANTEED COMPLETION
+   ========================================================================= */
+
+// Global hard safety: dismiss loader after 20s no matter what
+const hardTimeout = setTimeout(()=>{
+  console.warn('[BOOT] Hard timeout - force dismissing loader');
+  const loading = document.getElementById('loading');
+  if(loading){
+    loading.classList.add('gone');
+    setTimeout(()=>{loading.style.display='none';}, 600);
+  }
+}, 20000);
+
+function dismissLoader(){
+  clearTimeout(hardTimeout);
+  const loading = document.getElementById('loading');
+  if(loading){
+    loading.classList.add('gone');
+    setTimeout(()=>{loading.style.display='none';}, 600);
+  }
+}
+
+async function boot(){
+  const fill = document.getElementById('loadFill');
+  const status = document.getElementById('loadStatus');
+
+  try {
+    if(typeof THREE === 'undefined'){
+      status.textContent = 'Three.js failed — check internet';
+      status.style.color = '#ff3a5c';
+      setTimeout(dismissLoader, 2000);
+      return;
+    }
+
+    status.textContent = 'Loading assets...';
+    fill.style.width = '10%';
+
+    await preloadAllAssets((prog, path)=>{
+      fill.style.width = (10 + prog*60)+'%';
+      const name = path.split('/').pop();
+      status.textContent = `Loading ${name}`;
+    });
+
+    fill.style.width = '75%';
+    status.textContent = 'Building the cave...';
+
+    initThree();
+    fill.style.width = '90%';
+
+    Game.init();
+    animate();
+
+    fill.style.width = '100%';
+    status.textContent = 'Ready!';
+
+    await new Promise(r=>setTimeout(r, 400));
+    dismissLoader();
+
+  } catch(err){
+    console.error('[BOOT] Error:', err);
+    status.textContent = 'Error: ' + (err.message || 'Unknown');
+    status.style.color = '#ff3a5c';
+    setTimeout(dismissLoader, 3000);
+  }
+}
+
+// Start boot after a tiny delay to ensure DOM is fully ready
+if(document.readyState === 'complete' || document.readyState === 'interactive'){
+  setTimeout(boot, 10);
+} else {
+  document.addEventListener('DOMContentLoaded', ()=>setTimeout(boot, 10));
+}
+</script>
+</body>
+</html>
