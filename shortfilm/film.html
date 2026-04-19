@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Watching From Outside | An Alpha GEMS Short Film</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Crimson Text',serif;color:#fff}
+
+canvas{position:fixed;inset:0;z-index:1;display:block}
+
+/* cinematic letterbox */
+.bar{position:fixed;left:0;right:0;background:#000;z-index:100;transition:height 1.5s ease-out}
+.bar-top{top:0;height:80px}
+.bar-bot{bottom:0;height:80px}
+.bars-open .bar-top,.bars-open .bar-bot{height:0}
+
+/* subtitle */
+#sub{
+  position:fixed;bottom:110px;left:50%;transform:translateX(-50%);
+  width:min(720px,90vw);z-index:80;pointer-events:none;text-align:center;
+}
+#subLine{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.1rem,3vw,1.8rem);color:#fff;line-height:1.5;
+  text-shadow:0 2px 20px rgba(0,0,0,0.95),0 0 40px rgba(123,47,255,0.5);
+  min-height:2.5em;opacity:0;transition:opacity 0.6s
+}
+#subCap{
+  font-family:'Crimson Text',serif;font-style:italic;
+  font-size:clamp(0.85rem,2vw,1.1rem);color:rgba(200,180,255,0.65);
+  margin-top:8px;letter-spacing:2px;opacity:0;transition:opacity 0.6s 0.2s
+}
+#sub.show #subLine,#sub.show #subCap{opacity:1}
+
+/* progress bar */
+#progress{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  width:min(400px,70vw);height:1px;background:rgba(255,255,255,0.1);z-index:80
+}
+#progFill{
+  height:100%;background:linear-gradient(90deg,rgba(123,47,255,0.7),rgba(0,212,255,0.7));
+  width:0%;transition:width 0.3s linear
+}
+
+/* play screen */
+#play{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:200;
+  background:radial-gradient(ellipse at center,rgba(10,5,30,0.98) 0%,#000 100%);
+  transition:opacity 0.8s;cursor:pointer;padding:20px;text-align:center
+}
+#play.hide{opacity:0;pointer-events:none}
+#play .gem{font-size:5rem;filter:drop-shadow(0 0 40px rgba(123,47,255,0.9));animation:pulse 2s ease-in-out infinite;margin-bottom:24px}
+@keyframes pulse{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.1) rotate(5deg);filter:drop-shadow(0 0 60px rgba(0,212,255,1))}}
+#play h2{
+  font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.5rem);
+  color:#fff;letter-spacing:6px;margin-bottom:10px
+}
+#play p{
+  font-family:'Crimson Text',serif;font-style:italic;
+  color:rgba(200,180,255,0.7);font-size:1.1rem;letter-spacing:2px;margin-bottom:36px
+}
+#startBtn{
+  background:none;border:1px solid rgba(123,47,255,0.6);color:rgba(220,200,255,0.9);
+  padding:16px 48px;font-family:'Crimson Text',serif;font-style:italic;
+  font-size:1.15rem;letter-spacing:4px;cursor:pointer;
+  transition:all 0.3s;border-radius:2px
+}
+#startBtn:hover{background:rgba(123,47,255,0.25);border-color:rgba(0,212,255,0.9);color:#fff;box-shadow:0 0 30px rgba(123,47,255,0.5)}
+
+/* end card */
+#end{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:150;
+  background:radial-gradient(ellipse at center,rgba(10,5,30,0.98) 0%,#000 100%);
+  opacity:0;pointer-events:none;transition:opacity 2s;padding:40px 24px;text-align:center
+}
+#end.show{opacity:1;pointer-events:auto}
+#end .gem{font-size:5rem;filter:drop-shadow(0 0 40px rgba(123,47,255,0.9));animation:pulse 3s ease-in-out infinite;margin-bottom:20px}
+#end h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:#fff;letter-spacing:4px;margin-bottom:14px}
+#end .q{font-family:'Crimson Text',serif;font-style:italic;color:rgba(200,180,255,0.85);font-size:clamp(1rem,2.5vw,1.4rem);line-height:1.7;max-width:520px;margin-bottom:28px}
+#end .c{font-size:0.8rem;color:rgba(200,180,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+#end .replay{background:none;border:1px solid rgba(123,47,255,0.5);color:rgba(200,180,255,0.8);padding:12px 32px;font-family:'Crimson Text',serif;font-style:italic;font-size:1rem;letter-spacing:3px;cursor:pointer;transition:all 0.3s;border-radius:2px;margin-top:20px}
+#end .replay:hover{background:rgba(123,47,255,0.25);color:#fff}
+
+/* title overlay */
+#title{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;z-index:70;opacity:0;pointer-events:none;
+  transition:opacity 1.8s;text-align:center;padding:20px
+}
+#title.show{opacity:1}
+#title h1{
+  font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,4.5rem);
+  color:#fff;letter-spacing:8px;text-align:center;line-height:1.2;
+  text-shadow:0 0 60px rgba(123,47,255,0.8)
+}
+#title .s{
+  font-family:'Crimson Text',serif;font-style:italic;
+  font-size:clamp(1rem,3vw,1.5rem);color:rgba(200,180,255,0.75);
+  margin-top:18px;letter-spacing:4px
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="bar bar-top"></div>
+<div class="bar bar-bot"></div>
+
+<div id="title">
+  <h1 id="titleH">WATCHING FROM OUTSIDE</h1>
+  <div class="s" id="titleS">A short film for Alpha GEMS</div>
+</div>
+
+<div id="sub">
+  <div id="subLine"></div>
+  <div id="subCap"></div>
+</div>
+
+<div id="progress"><div id="progFill"></div></div>
+
+<div id="end">
+  <div class="gem">💎</div>
+  <h2>GEMs on Top</h2>
+  <div class="q">"Some people never get inside the cave.<br/>But they keep the light on outside.<br/>That matters more than they know."</div>
+  <div class="c">A film by vsriyans</div>
+  <div class="c">For Alpha GEMS · @0xAlphaGEMs</div>
+  <button class="replay" onclick="location.reload()">↺ Watch Again</button>
+</div>
+
+<div id="play">
+  <div class="gem">💎</div>
+  <h2>WATCHING FROM OUTSIDE</h2>
+  <p>A 60-second short film for Alpha GEMS</p>
+  <button id="startBtn">▶ Begin</button>
+</div>
+
+<script>
+/* ====================================================================
+   WATCHING FROM OUTSIDE
+   60-second short film — fully deterministic, no flag juggling
+   ==================================================================== */
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W=0, H=0;
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+/* ---------- IMAGE LOADING ---------- */
+const imgs = {};
+const paths = {
+  logo:    'assets/logo.png',
+  safz:    'assets/safz.png',
+  jampzey: 'assets/jampzey.png',
+  pix:     'assets/pix.png',
+  meiv:    'assets/meiv.png',
+  zera:    'assets/zera.png',
+  shaq:    'assets/shaq.png',
+  emma:    'assets/emma.png',
+  tulip:   'assets/tulip.png',
+  website: 'assets/website.jpg',
+  game:    'assets/game.jpg',
+  filmStill: 'assets/film-still.jpg',
+  drawing: 'assets/drawing.jpg'
+};
+
+function loadAll(){
+  return Promise.all(Object.entries(paths).map(([k,src])=>{
+    return new Promise(resolve=>{
+      const img = new Image();
+      const done = ()=>{imgs[k]=img; resolve();};
+      img.onload = done;
+      img.onerror = ()=>{ console.warn('failed',src); imgs[k]=null; resolve(); };
+      // safety timeout — never hang
+      setTimeout(done, 6000);
+      img.src = src;
+    });
+  }));
+}
+
+/* ---------- AUDIO ---------- */
+let audioCtx=null;
+function initAudio(){
+  try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
+  catch(e){ audioCtx=null; }
+}
+function tone(freq, vol=0.05, dur=5, delay=0, type='sine'){
+  if(!audioCtx) return;
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type=type;
+    o.frequency.setValueAtTime(freq, audioCtx.currentTime+delay);
+    g.gain.setValueAtTime(0, audioCtx.currentTime+delay);
+    g.gain.linearRampToValueAtTime(vol, audioCtx.currentTime+delay+0.8);
+    g.gain.linearRampToValueAtTime(vol*0.5, audioCtx.currentTime+delay+dur*0.7);
+    g.gain.linearRampToValueAtTime(0, audioCtx.currentTime+delay+dur);
+    o.start(audioCtx.currentTime+delay);
+    o.stop(audioCtx.currentTime+delay+dur);
+  } catch(e){}
+}
+function chord(freqs, delay=0, dur=6){
+  freqs.forEach((f,i)=>tone(f, 0.035, dur, delay+i*0.08));
+}
+function playScore(){
+  // 60 seconds of emotional ambient — 8 emotional beats
+  chord([110, 138.6, 164.8], 0, 6);         // 0-6   opening — lonely
+  chord([130.8, 174.6, 196], 6, 6);          // 6-12  scrolling — searching
+  chord([146.8, 196, 220], 12, 6);           // 12-18 first sight
+  chord([164.8, 220, 261.6, 329.6], 18, 7);  // 18-25 team warmth
+  chord([130.8, 164.8, 196, 246.9], 26, 7);  // 26-33 window — longing
+  chord([110, 130.8, 155.6], 34, 7);         // 34-41 rain
+  chord([174.6, 220, 261.6, 329.6], 42, 7);  // 42-49 hard work — hope
+  chord([196, 246.9, 293.7, 392, 493.9], 50, 12); // 50-62 resolution
+}
+
+/* ---------- PARTICLES ---------- */
+let stars=[], rain=[], gemsFloat=[];
+function initStars(){
+  stars = Array.from({length:140}, ()=>({
+    x: Math.random(), y: Math.random(),
+    r: Math.random()*1.5+0.3,
+    a: Math.random()*0.6+0.2,
+    tw: Math.random()*Math.PI*2
+  }));
+}
+function initRain(){
+  rain = Array.from({length:100}, ()=>({
+    x: Math.random(), y: Math.random(),
+    s: 4+Math.random()*5,
+    l: 12+Math.random()*20,
+    a: 0.2+Math.random()*0.3
+  }));
+}
+function initGems(){
+  gemsFloat = Array.from({length:10}, (_,i)=>({
+    x: (i/10) + Math.random()*0.05,
+    y: Math.random()*0.6+0.2,
+    s: 8+Math.random()*12,
+    sp: 0.0003+Math.random()*0.0004,
+    ph: Math.random()*Math.PI*2,
+    c: ['#7b2fff','#00d4ff','#ffd700','#ff6fff','#00ffb3'][i%5]
+  }));
+}
+initStars(); initRain(); initGems();
+
+/* ---------- DRAW HELPERS ---------- */
+function drawStars(t, alpha=1){
+  stars.forEach(s=>{
+    const a = (Math.sin(t*0.5+s.tw)*0.3+0.7)*s.a*alpha;
+    ctx.fillStyle = `rgba(255,255,255,${a})`;
+    ctx.beginPath();
+    ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+function drawRain(alpha=0.6){
+  ctx.strokeStyle = `rgba(150,180,255,${alpha*0.35})`;
+  ctx.lineWidth = 0.8;
+  rain.forEach(d=>{
+    d.y += d.s*0.0015;
+    d.x -= 0.0005;
+    if(d.y > 1){ d.y = -0.05; d.x = Math.random(); }
+    if(d.x < 0) d.x = 1;
+    ctx.globalAlpha = d.a*alpha;
+    ctx.beginPath();
+    ctx.moveTo(d.x*W, d.y*H);
+    ctx.lineTo(d.x*W-4, d.y*H+d.l);
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+}
+function drawGem(x,y,s,color,alpha=1,glow=true){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if(glow){ ctx.shadowColor=color; ctx.shadowBlur=s*1.5; }
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x, y-s);
+  ctx.lineTo(x+s*0.6, y-s*0.2);
+  ctx.lineTo(x+s*0.8, y+s*0.3);
+  ctx.lineTo(x, y+s);
+  ctx.lineTo(x-s*0.8, y+s*0.3);
+  ctx.lineTo(x-s*0.6, y-s*0.2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.beginPath();
+  ctx.moveTo(x, y-s);
+  ctx.lineTo(x+s*0.6, y-s*0.2);
+  ctx.lineTo(x, y+s*0.1);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+function drawCircle(img,x,y,r,color='#7b2fff',alpha=1,glow=true){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if(glow){ ctx.shadowColor=color; ctx.shadowBlur=30; }
+  ctx.beginPath();
+  ctx.arc(x,y,r+3,0,Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.clip();
+  if(img){
+    try { ctx.drawImage(img, x-r, y-r, r*2, r*2); }
+    catch(e){ ctx.fillStyle='#2a1060'; ctx.fill(); }
+  } else {
+    ctx.fillStyle='#2a1060'; ctx.fill();
+  }
+  ctx.restore();
+}
+function drawVsriyans(x,y,r,alpha=1,t=0){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  // glow ring
+  const g = ctx.createRadialGradient(x,y,r*0.2,x,y,r*1.7);
+  g.addColorStop(0,'rgba(123,47,255,0.4)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x,y,r*1.7,0,Math.PI*2);
+  ctx.fill();
+  // silhouette
+  ctx.shadowColor = '#7b2fff';
+  ctx.shadowBlur = 30+Math.sin(t)*10;
+  ctx.fillStyle = 'rgba(10,5,30,0.95)';
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fill();
+  // border
+  ctx.strokeStyle = `rgba(123,47,255,${0.75+Math.sin(t*2)*0.2})`;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  // gem inside
+  drawGem(x, y-r*0.05, r*0.45, '#7b2fff', 1, false);
+  // name
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = `rgba(210,190,255,${0.75+Math.sin(t)*0.15})`;
+  ctx.font = `bold ${Math.max(11,r*0.3)}px 'Crimson Text', serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('vsriyans', x, y+r+20);
+  ctx.restore();
+}
+function drawCave(x,y,w,h,alpha=1,glow=0.6){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  const cg = ctx.createRadialGradient(x,y+h*0.1,w*0.05,x,y+h*0.1,w*0.6);
+  cg.addColorStop(0,'rgba(0,0,0,0.98)');
+  cg.addColorStop(0.7,'rgba(20,5,50,0.9)');
+  cg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = cg;
+  ctx.beginPath();
+  ctx.ellipse(x,y+h*0.2,w*0.5,h*0.55,0,Math.PI,0);
+  ctx.fill();
+  ctx.shadowColor = '#7b2fff';
+  ctx.shadowBlur = 40*glow;
+  ctx.strokeStyle = `rgba(123,47,255,${0.5*glow})`;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.ellipse(x,y+h*0.2,w*0.5,h*0.55,0,Math.PI,0);
+  ctx.stroke();
+  for(let i=0;i<5;i++){
+    const cx = x+(i-2)*w*0.08;
+    const cy = y+h*0.55;
+    drawGem(cx,cy,6+i*2,['#7b2fff','#00d4ff','#ffd700'][i%3],0.6*glow,false);
+  }
+  ctx.restore();
+}
+function fill(color,alpha){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+}
+function drawText(text,x,y,size,color='#fff',alpha=1,font='Playfair Display',align='center'){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.font = `${size}px '${font}', serif`;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(123,47,255,0.8)';
+  ctx.shadowBlur = 20;
+  ctx.fillText(text,x,y);
+  ctx.restore();
+}
+function drawScreenshot(img, t, alpha=1, label=''){
+  // Draw a screenshot as a "floating polaroid" in the scene
+  if(!img){ return; }
+  const maxW = Math.min(W*0.6, 700);
+  const aspect = img.naturalWidth / img.naturalHeight || 16/9;
+  const iw = maxW;
+  const ih = iw / aspect;
+  const x = (W-iw)/2;
+  const y = (H-ih)/2 - H*0.05;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  // shadow
+  ctx.shadowColor = 'rgba(123,47,255,0.6)';
+  ctx.shadowBlur = 50;
+  // frame background
+  ctx.fillStyle = '#f8f5ea';
+  const pad = 12;
+  ctx.fillRect(x-pad, y-pad, iw+pad*2, ih+pad*2+30);
+  ctx.shadowBlur = 0;
+  // image
+  try { ctx.drawImage(img, x, y, iw, ih); }
+  catch(e){}
+  // label under
+  ctx.fillStyle = '#222';
+  ctx.font = `italic ${Math.max(14, iw*0.028)}px 'Crimson Text', serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(label, x+iw/2, y+ih+pad+8);
+  ctx.restore();
+}
+
+/* ---------- SUBTITLE HELPERS ---------- */
+function setSub(line, cap=''){
+  document.getElementById('subLine').textContent = line;
+  document.getElementById('subCap').textContent = cap;
+  document.getElementById('sub').classList.add('show');
+}
+function clearSub(){
+  document.getElementById('sub').classList.remove('show');
+}
+
+/* ====================================================================
+   SCENE FUNCTIONS — each takes local progress t (0..1) and elapsed seconds
+   ==================================================================== */
+
+// SCENE 1: 0-4s — Black open, stars, title fades in
+function s_open(t, e){
+  fill('#000', 1);
+  drawStars(e, Math.min(t*3,1)*0.4);
+  const title = document.getElementById('title');
+  if(t > 0.2 && t < 0.85) title.classList.add('show');
+  else title.classList.remove('show');
+}
+
+// SCENE 2: 4-10s — Phone scrolling
+function s_scroll(t, e){
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#000'); bg.addColorStop(1,'#05020f');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  drawStars(e, 0.3);
+
+  const phoneW = Math.min(260, W*0.32);
+  const phoneH = phoneW * 2;
+  const px = W/2 - phoneW/2;
+  const py = H/2 - phoneH/2 - H*0.03;
+
+  // phone body
+  ctx.save();
+  ctx.shadowColor = '#7b2fff';
+  ctx.shadowBlur = 30;
+  ctx.fillStyle = '#0a0a12';
+  ctx.strokeStyle = 'rgba(123,47,255,0.4)';
+  ctx.lineWidth = 2;
+  roundRect(ctx, px, py, phoneW, phoneH, 20);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // clipped screen
+  ctx.save();
+  ctx.beginPath();
+  roundRect(ctx, px+8, py+30, phoneW-16, phoneH-60, 10);
+  ctx.clip();
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(px+8, py+30, phoneW-16, phoneH-60);
+
+  const scroll = (e * 80) % (phoneH * 2);
+  for(let i=0;i<10;i++){
+    const cy = py+40 + i*(phoneH*0.22) - scroll;
+    if(cy > py+30 && cy < py+phoneH-20){
+      ctx.fillStyle = 'rgba(20,10,40,0.85)';
+      roundRect(ctx, px+12, cy, phoneW-24, phoneH*0.18, 6);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(123,47,255,0.25)';
+      ctx.fillRect(px+18, cy+8, 18, 18);
+      ctx.fillStyle = 'rgba(200,200,220,0.5)';
+      ctx.fillRect(px+44, cy+10, phoneW*0.45, 4);
+      ctx.fillStyle = 'rgba(150,150,180,0.3)';
+      ctx.fillRect(px+44, cy+18, phoneW*0.3, 3);
+      ctx.fillRect(px+18, cy+32, phoneW*0.65, 3);
+      ctx.fillRect(px+18, cy+40, phoneW*0.5, 3);
+    }
+  }
+  ctx.restore();
+
+  drawVsriyans(W/2, H*0.86, phoneW*0.2, Math.min(t*2,1), e);
+  drawText('2:00 AM', W/2, H*0.08, Math.min(W,H)*0.025,
+    'rgba(210,190,255,0.5)', Math.min(t*3,1), 'Crimson Text');
+}
+
+// SCENE 3: 10-17s — First sight of cave
+function s_first(t, e){
+  fill('#000', 1);
+  drawStars(e, 0.6);
+
+  const ca = Math.min(t*2, 1);
+  drawCave(W/2, H*0.4, W*0.55, H*0.6, ca, t);
+
+  if(t > 0.3 && imgs.logo){
+    const ls = Math.min(W,H)*0.13;
+    const la = Math.min((t-0.3)*3, 1);
+    ctx.save();
+    ctx.globalAlpha = la;
+    ctx.shadowColor = '#7b2fff';
+    ctx.shadowBlur = 50;
+    ctx.drawImage(imgs.logo, W/2-ls/2, H*0.08, ls, ls);
+    ctx.restore();
+  }
+
+  const p = Math.min(t*1.2, 1);
+  const vx = W*0.1 + p*W*0.32;
+  const vy = H*0.74;
+  const vr = Math.min(W,H)*0.045 * (0.6+p*0.4);
+  drawVsriyans(vx, vy, vr, 1, e);
+
+  // ground glow
+  const gg = ctx.createRadialGradient(W/2, H*0.75, 0, W/2, H*0.75, W*0.35);
+  gg.addColorStop(0, `rgba(123,47,255,${0.18*t})`);
+  gg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gg;
+  ctx.fillRect(0, H*0.5, W, H*0.5);
+}
+
+// SCENE 4: 17-26s — Team inside cave (warmth)
+function s_team(t, e){
+  const bg = ctx.createRadialGradient(W/2, H*0.4, 0, W/2, H*0.4, W*0.7);
+  bg.addColorStop(0, '#150830');
+  bg.addColorStop(0.6, '#0a0520');
+  bg.addColorStop(1, '#000');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+  drawStars(e, 0.4);
+
+  const team = [
+    {k:'safz',    c:'#ff3a5c', a:-0.55},
+    {k:'jampzey', c:'#7b2fff', a:-0.28},
+    {k:'pix',     c:'#cc88ff', a:0},
+    {k:'meiv',    c:'#00ffb3', a:0.28},
+    {k:'zera',    c:'#ffd700', a:0.55}
+  ];
+  const cx = W/2, cy = H*0.42;
+  const rad = Math.min(W,H)*0.28;
+  const ar = Math.min(W,H)*0.07;
+
+  team.forEach((m,i)=>{
+    const delay = i*0.1;
+    const ma = Math.min(Math.max((t-delay)*3, 0), 1);
+    const x = cx + Math.sin(m.a*Math.PI)*rad;
+    const y = cy + Math.cos(m.a*Math.PI)*rad*0.35 - Math.abs(m.a)*rad*0.1;
+    const bob = Math.sin(e*1.5+i*0.8)*4;
+    drawCircle(imgs[m.k], x, y+bob, ar, m.c, ma, true);
+  });
+
+  // center shared gem
+  if(t > 0.5){
+    drawGem(cx, cy-rad*0.15, Math.min(W,H)*0.04*Math.min((t-0.5)*4,1), '#ffd700', Math.min((t-0.5)*4,1), true);
+  }
+
+  drawVsriyans(W/2, H*0.86, Math.min(W,H)*0.065, 1, e);
+
+  if(t > 0.3){
+    const la = Math.min((t-0.3)*3, 1)*0.25;
+    ctx.save();
+    ctx.globalAlpha = la;
+    ctx.strokeStyle = 'rgba(210,190,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6,12]);
+    ctx.beginPath();
+    ctx.moveTo(0, H*0.74);
+    ctx.lineTo(W, H*0.74);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// SCENE 5: 26-34s — Window / pressed to glass
+function s_window(t, e){
+  fill('#000', 1);
+  drawStars(e, 0.5);
+
+  const gx = W/2, gy = H*0.4;
+  const gr = Math.min(W,H)*0.28;
+
+  const wg = ctx.createRadialGradient(gx, gy, gr*0.1, gx, gy, gr);
+  wg.addColorStop(0, 'rgba(100,40,200,0.4)');
+  wg.addColorStop(0.5, 'rgba(60,20,120,0.15)');
+  wg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = wg;
+  ctx.beginPath();
+  ctx.arc(gx, gy, gr, 0, Math.PI*2);
+  ctx.fill();
+
+  if(imgs.logo){
+    const ls = Math.min(W,H)*0.09;
+    ctx.save();
+    ctx.globalAlpha = 0.55+Math.sin(e*1.5)*0.1;
+    ctx.shadowColor = '#7b2fff';
+    ctx.shadowBlur = 35;
+    ctx.drawImage(imgs.logo, gx-ls/2, gy-ls*0.7, ls, ls);
+    ctx.restore();
+  }
+
+  // silhouettes inside
+  const angles = [-0.5, -0.25, 0, 0.25, 0.5];
+  angles.forEach((a,i)=>{
+    const mx = gx + Math.sin(a*Math.PI)*gr*0.55;
+    const my = gy + Math.cos(a*Math.PI)*gr*0.2;
+    ctx.save();
+    ctx.globalAlpha = 0.25+Math.sin(e*0.8+i)*0.05;
+    ctx.fillStyle = 'rgba(210,190,255,0.4)';
+    ctx.beginPath();
+    ctx.arc(mx, my, Math.min(W,H)*0.04, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  const vr = Math.min(W,H)*0.1;
+  const vy = H*0.75;
+  drawVsriyans(W/2, vy, vr, 1, e);
+
+  // reaching line
+  const rt = Math.min(Math.max(t*2-0.5, 0), 1);
+  if(rt > 0){
+    ctx.save();
+    ctx.globalAlpha = rt*0.7;
+    ctx.strokeStyle = 'rgba(123,47,255,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W/2, vy-vr);
+    ctx.lineTo(W/2, vy-vr-rt*80);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(210,190,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(W/2, vy-vr-rt*80, 4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// SCENE 6: 34-42s — Rain
+function s_rain(t, e){
+  fill('#000', 1);
+  drawStars(e, 0.15);
+  drawRain(0.5+t*0.5);
+
+  for(let i=0;i<4;i++){
+    const px = W*(0.15+i*0.2);
+    const py = H*0.9;
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = '#7b2fff';
+    ctx.beginPath();
+    ctx.ellipse(px, py, 30+i*10, 6, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  drawCave(W/2, H*0.4, W*0.4, H*0.5, 0.45, 0.45);
+  drawVsriyans(W/2, H*0.75, Math.min(W,H)*0.08, 1, e);
+
+  const cgg = ctx.createRadialGradient(W/2, H*0.4, 0, W/2, H*0.4, W*0.25);
+  cgg.addColorStop(0, `rgba(123,47,255,${0.22*t})`);
+  cgg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = cgg;
+  ctx.fillRect(0,0,W,H);
+}
+
+// SCENE 7: 42-50s — vsriyans's hard work shown (4 screenshots rotating)
+function s_hardwork(t, e){
+  // warm dark background
+  const bg = ctx.createRadialGradient(W/2, H*0.5, 0, W/2, H*0.5, W*0.8);
+  bg.addColorStop(0, '#0d0530');
+  bg.addColorStop(0.6, '#050215');
+  bg.addColorStop(1, '#000');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+  drawStars(e, 0.7);
+
+  // rays from center
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  for(let i=0;i<16;i++){
+    const ang = (i/16)*Math.PI*2 + e*0.1;
+    const grad = ctx.createLinearGradient(W/2, H*0.5, W/2+Math.cos(ang)*W*0.5, H*0.5+Math.sin(ang)*H*0.5);
+    grad.addColorStop(0, 'rgba(123,47,255,0.4)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(W/2, H*0.5);
+    ctx.lineTo(W/2+Math.cos(ang)*W*0.5, H*0.5+Math.sin(ang)*H*0.5);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // show screenshots in sequence — each ~2 seconds of the 8s scene
+  const works = [
+    {img:imgs.website, label:'The Website — gemsontop.xyz'},
+    {img:imgs.game,    label:'The 3D Game — Enter the GEM Cave'},
+    {img:imgs.filmStill, label:'This Film — Watching From Outside'},
+    {img:imgs.drawing,   label:'The Drawing — Safz, Founder of Alpha GEMS'}
+  ];
+  // t runs 0..1 over 8s => each work gets 0.25 of t
+  const idx = Math.min(Math.floor(t * works.length), works.length-1);
+  const local = (t * works.length) - idx; // 0..1 within this work's slot
+  // fade in/out
+  let alpha = 1;
+  if(local < 0.15) alpha = local/0.15;
+  else if(local > 0.8) alpha = 1 - (local-0.8)/0.2;
+  alpha = Math.max(0, Math.min(1, alpha));
+
+  const current = works[idx];
+  if(current){
+    drawScreenshot(current.img, local, alpha, current.label);
+  }
+
+  // small vsriyans at bottom, watching his own work
+  drawVsriyans(W/2, H*0.9, Math.min(W,H)*0.045, 0.85, e);
+}
+
+// SCENE 8: 50-62s — Logo rises + team + final image
+function s_final(t, e){
+  const bg = ctx.createRadialGradient(W/2, H*0.5, 0, W/2, H*0.5, W*0.8);
+  bg.addColorStop(0, '#0d0530');
+  bg.addColorStop(0.6, '#050215');
+  bg.addColorStop(1, '#000');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+  drawStars(e, 0.85);
+
+  // cave warm glow
+  drawCave(W/2, H*0.36, W*0.55, H*0.6, 1, 0.8+Math.sin(e)*0.2);
+
+  // floating gems
+  gemsFloat.forEach(g=>{
+    g.y -= g.sp;
+    if(g.y < -0.03) g.y = 1.05;
+    drawGem(g.x*W, g.y*H, g.s, g.c, 0.5+Math.sin(e+g.ph)*0.2, true);
+  });
+
+  // logo rising from ground
+  const eased = 1 - Math.pow(1-Math.min(t*1.3,1), 3);
+  const ls = Math.min(W,H)*0.2;
+  const ly = H*0.9 - eased*H*0.55;
+  if(imgs.logo){
+    ctx.save();
+    ctx.globalAlpha = Math.min(t*3, 1);
+    ctx.shadowColor = '#7b2fff';
+    ctx.shadowBlur = 60;
+    ctx.drawImage(imgs.logo, W/2-ls/2, ly-ls/2, ls, ls);
+    ctx.restore();
+  }
+
+  // team appearing around logo
+  if(t > 0.3){
+    const team = ['safz','jampzey','pix','meiv','zera'];
+    const colors = ['#ff3a5c','#7b2fff','#cc88ff','#00ffb3','#ffd700'];
+    team.forEach((k,i)=>{
+      const d = 0.3+i*0.08;
+      const ma = Math.min(Math.max((t-d)*4, 0), 1);
+      const ang = (i/team.length)*Math.PI*2 - Math.PI*0.5 + e*0.1;
+      const mr = Math.min(W,H)*0.3;
+      const mx = W/2 + Math.cos(ang)*mr;
+      const my = ly + Math.sin(ang)*mr*0.5;
+      const ar = Math.min(W,H)*0.055;
+      drawCircle(imgs[k], mx, my, ar, colors[i], ma, true);
+    });
+  }
+
+  // vsriyans below
+  if(t > 0.55){
+    const va = Math.min((t-0.55)*4, 1);
+    const vr = Math.min(W,H)*0.08;
+    drawVsriyans(W/2, H*0.88, vr, va, e);
+    // connecting line
+    ctx.save();
+    ctx.globalAlpha = va*0.35;
+    ctx.strokeStyle = '#7b2fff';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,8]);
+    ctx.beginPath();
+    ctx.moveTo(W/2, H*0.88-vr);
+    ctx.lineTo(W/2, ly+ls/2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ALPHA GEMS text
+  if(t > 0.15){
+    drawText('ALPHA GEMS', W/2, H*0.18, Math.min(W,H)*0.035,
+      `rgba(210,190,255,${Math.min((t-0.15)*3,1)*0.8})`, 1, 'Playfair Display');
+  }
+
+  // final fade
+  if(t > 0.88){
+    const fa = (t-0.88)/0.12;
+    fill('#000', fa);
+  }
+}
+
+/* ====================================================================
+   TIMELINE — absolute (no flags, no hanging)
+   ====================================================================
+   Each frame we check elapsed time against fixed markers.
+   Subtitles + scenes are all determined by current elapsed seconds.
+   ==================================================================== */
+
+const DURATION = 62;
+const SCENES = [
+  [0,    4,  s_open],
+  [4,   10,  s_scroll],
+  [10,  17,  s_first],
+  [17,  26,  s_team],
+  [26,  34,  s_window],
+  [34,  42,  s_rain],
+  [42,  50,  s_hardwork],
+  [50,  62,  s_final]
+];
+
+// Subtitle markers: [timeSec, line, caption]
+const SUBS = [
+  [5,  'Every night, vsriyans scrolled.',               'Crypto Twitter · 2am'],
+  [7.5,'Thousands of posts. Empty promises.',           ''],
+  [10.5,'Then one night —',                              ''],
+  [13, 'A purple crystal glowed on his feed.',          ''],
+  [15.5,'Alpha GEMS. 2021. Free since day one.',         ''],
+  [18, 'He saw them inside.',                           ''],
+  [20, 'Safz. Jampzey. Pix. Meiv. Zera.',               'A family'],
+  [23, 'Laughing. Sharing. Building.',                  'Together'],
+  [26.5,'vsriyans pressed his face to the glass.',       ''],
+  [29, 'Watching from outside.',                        'Loyal as always'],
+  [31, '"This is not a group. This is family."',        '— he realized'],
+  [34.5,'Some nights it rained.',                        ''],
+  [37, 'Some nights the market crashed.',               ''],
+  [39.5,'But he always came back.',                      'Same purple glow'],
+  [42.5,'He couldn\'t just watch anymore.',              ''],
+  [44, 'So he built them a website.',                   'gemsontop.xyz'],
+  [46, 'And a 3D game of the GEM Cave.',                ''],
+  [48, 'This film. A song. A drawing of Safz.',         'All for free. Like they taught him.'],
+  [50.5,'Because loyalty is not about being inside.',    ''],
+  [53, 'It\'s about keeping the light on outside.',     ''],
+  [56, 'Even when nobody sees you.',                    ''],
+  [59, '"GEMs on Top." — Always.',                      '💎']
+];
+// Track which subtitle we've shown
+let currentSubIdx = -1;
+
+/* ---------- MAIN LOOP ---------- */
+let startTime = 0;
+let running = false;
+
+function loop(now){
+  if(!running) return;
+  const elapsed = (now - startTime) / 1000;
+
+  // progress bar
+  document.getElementById('progFill').style.width = Math.min(elapsed/DURATION*100, 100)+'%';
+
+  // update subtitle — find the latest subtitle whose time <= elapsed
+  let newIdx = -1;
+  for(let i=SUBS.length-1; i>=0; i--){
+    if(elapsed >= SUBS[i][0]){ newIdx = i; break; }
+  }
+  // also clear subtitle 1s before end of each scene chunk if next sub not reached
+  if(newIdx !== currentSubIdx){
+    if(newIdx === -1) clearSub();
+    else {
+      const [, line, cap] = SUBS[newIdx];
+      // Check if next subtitle is within 0.3s — don't display this one
+      const next = SUBS[newIdx+1];
+      if(!next || (next[0] - elapsed) > 0){
+        setSub(line, cap);
+      }
+    }
+    currentSubIdx = newIdx;
+  }
+
+  // find scene
+  let scene = SCENES[0];
+  for(let i=SCENES.length-1; i>=0; i--){
+    if(elapsed >= SCENES[i][0]){ scene = SCENES[i]; break; }
+  }
+  const [start, end, fn] = scene;
+  const localT = Math.min(Math.max((elapsed - start)/(end - start), 0), 1);
+
+  ctx.clearRect(0,0,W,H);
+  try {
+    fn(localT, elapsed);
+  } catch(err){
+    console.error('Scene error:', err);
+    fill('#000', 1);
+  }
+
+  // End?
+  if(elapsed >= DURATION){
+    running = false;
+    clearSub();
+    document.getElementById('end').classList.add('show');
+    return;
+  }
+
+  requestAnimationFrame(loop);
+}
+
+/* ---------- HELPERS ---------- */
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+/* ---------- BOOT ---------- */
+document.getElementById('startBtn').addEventListener('click', async ()=>{
+  // Pre-load assets
+  const btn = document.getElementById('startBtn');
+  btn.textContent = 'LOADING...';
+  btn.disabled = true;
+
+  await loadAll();
+
+  initAudio();
+  playScore();
+
+  document.getElementById('play').classList.add('hide');
+  document.body.classList.add('bars-open');
+
+  startTime = performance.now();
+  running = true;
+  requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>
