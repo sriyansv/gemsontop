@@ -181,3 +181,124 @@ footer {
   color: #9090cc; font-size: 0.9rem; line-height: 2;
 }
 footer a { color: var(--gem2); text-decoration: none; }
+
+/* FILM SECTION */
+.film-section {
+  background: rgba(13, 13, 43, 0.3);
+  padding: 100px 8%;
+}
+
+.film-card {
+  max-width: 800px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+
+.film-poster {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: radial-gradient(ellipse at center, #1a0840 0%, #000 100%);
+  border: 1px solid rgba(123, 47, 255, 0.4);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 40px rgba(123, 47, 255, 0.2);
+}
+
+.film-poster:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 60px rgba(123, 47, 255, 0.5);
+}
+
+.film-poster::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(123, 47, 255, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(0, 212, 255, 0.25) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.film-poster .gem-big {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(3rem, 8vw, 5rem);
+  filter: drop-shadow(0 0 30px rgba(123, 47, 255, 0.8));
+  animation: gemFloat 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes gemFloat {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+  50% { transform: translate(-50%, -55%) rotate(5deg); }
+}
+
+.film-poster .film-title {
+  position: absolute;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1rem, 2.5vw, 1.8rem);
+  color: #fff;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(123, 47, 255, 0.8);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.film-poster .film-sub {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Rajdhani', sans-serif;
+  font-style: italic;
+  font-size: clamp(0.8rem, 1.8vw, 1rem);
+  color: rgba(200, 180, 255, 0.7);
+  letter-spacing: 2px;
+  z-index: 2;
+}
+
+.film-poster .play-icon {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gem), var(--gem2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+  animation: pulsePlay 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes pulsePlay {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.1); }
+}
+
+.film-caption {
+  margin-top: 20px;
+  color: #9090cc;
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.film-caption strong {
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 700;
+}
