@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Alpha GEMS Quiz | GEMs on Top</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gem:#7b2fff;--gem2:#00d4ff;--gold:#ffd700;
+  --success:#00ffb3;--danger:#ff3a5c;--bg:#030308;
+}
+html,body{min-height:100%;background:var(--bg);color:#fff;font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* WRAPPER */
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:40px 20px 80px}
+
+/* HEADER */
+.quiz-header{text-align:center;margin-bottom:48px}
+.quiz-header .gem-icon{font-size:3.5rem;filter:drop-shadow(0 0 30px rgba(123,47,255,0.9));animation:float 3s ease-in-out infinite;display:inline-block;margin-bottom:16px}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-12px) rotate(5deg)}}
+.quiz-header h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.8rem,5vw,3rem);background:linear-gradient(135deg,#fff 10%,var(--gem2) 55%,var(--gem));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:4px;line-height:1.1;margin-bottom:10px}
+.quiz-header p{color:#9090cc;font-size:1.05rem;letter-spacing:1px}
+.quiz-header .badge{display:inline-block;background:linear-gradient(135deg,var(--gem),var(--gem2));border-radius:20px;padding:4px 16px;font-size:0.8rem;font-family:'Orbitron',sans-serif;letter-spacing:2px;margin-top:12px;color:#fff}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:36px}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-meta span{font-family:'Orbitron',sans-serif;font-size:0.75rem;color:var(--gem2);letter-spacing:2px}
+.progress-meta .score-live{color:var(--gold)}
+.progress-bar{height:4px;background:rgba(123,47,255,0.2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gem),var(--gem2));border-radius:2px;transition:width 0.5s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* QUESTION CARD */
+.q-card{background:linear-gradient(145deg,rgba(20,10,50,0.9),rgba(8,4,25,0.95));border:1px solid rgba(123,47,255,0.4);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;animation:cardIn 0.5s cubic-bezier(.4,0,.2,1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:none}}
+.q-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(123,47,255,0.12) 0%,transparent 60%);pointer-events:none}
+.q-number{font-family:'Orbitron',sans-serif;font-size:0.75rem;color:var(--gem2);letter-spacing:4px;margin-bottom:16px;text-transform:uppercase}
+.q-text{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2.8vw,1.25rem);line-height:1.5;color:#fff;margin-bottom:32px;font-weight:700}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:12px}
+.opt{background:rgba(30,15,60,0.6);border:1.5px solid rgba(123,47,255,0.3);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:14px;font-size:1rem;font-weight:600;color:#d0d0f0;position:relative;overflow:hidden}
+.opt::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(123,47,255,0.15),rgba(0,212,255,0.1));opacity:0;transition:opacity 0.2s}
+.opt:hover:not(.disabled){border-color:var(--gem2);color:#fff;transform:translateX(6px)}
+.opt:hover:not(.disabled)::before{opacity:1}
+.opt.disabled{cursor:default}
+.opt-letter{width:32px;height:32px;border-radius:8px;background:rgba(123,47,255,0.3);border:1px solid rgba(123,47,255,0.5);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:700;color:var(--gem2);flex-shrink:0;transition:all 0.2s}
+.opt-text{flex:1}
+
+/* CORRECT / WRONG states */
+.opt.correct{background:rgba(0,255,179,0.2);border-color:var(--success);color:var(--success);transform:none}
+.opt.correct .opt-letter{background:var(--success);border-color:var(--success);color:#000}
+.opt.correct::after{content:'✓';position:absolute;right:18px;font-size:1.2rem;color:var(--success)}
+.opt.wrong{background:rgba(255,58,92,0.2);border-color:var(--danger);color:var(--danger);transform:none}
+.opt.wrong .opt-letter{background:var(--danger);border-color:var(--danger);color:#fff}
+.opt.wrong::after{content:'✗';position:absolute;right:18px;font-size:1.2rem;color:var(--danger)}
+.opt.reveal{background:rgba(0,255,179,0.1);border-color:rgba(0,255,179,0.4);color:rgba(0,255,179,0.7)}
+
+/* FEEDBACK */
+.feedback{margin-top:20px;padding:14px 18px;border-radius:10px;font-size:0.95rem;font-weight:600;display:none;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.feedback.show{display:flex;align-items:center;gap:10px}
+.feedback.correct-fb{background:rgba(0,255,179,0.15);border:1px solid rgba(0,255,179,0.3);color:var(--success)}
+.feedback.wrong-fb{background:rgba(255,58,92,0.15);border:1px solid rgba(255,58,92,0.3);color:var(--danger)}
+.feedback-icon{font-size:1.2rem;flex-shrink:0}
+.feedback-text{line-height:1.4}
+
+/* NEXT BUTTON */
+.btn-next{display:none;width:100%;margin-top:24px;padding:16px;background:linear-gradient(135deg,var(--gem),var(--gem2));border:none;border-radius:30px;color:#fff;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:3px;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 24px rgba(123,47,255,0.5)}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,212,255,0.6)}
+.btn-next.show{display:block;animation:fadeUp 0.4s ease 0.2s both}
+
+/* SCORE CARD */
+.score-card{display:none;text-align:center;animation:cardIn 0.6s ease}
+.score-card.show{display:block}
+.score-gem{font-size:5rem;filter:drop-shadow(0 0 40px rgba(255,215,0,0.8));animation:float 2.5s ease-in-out infinite;margin-bottom:20px;display:inline-block}
+.score-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900;margin-bottom:10px;letter-spacing:4px}
+.score-num{font-family:'Orbitron',sans-serif;font-size:clamp(3rem,10vw,6rem);font-weight:900;line-height:1;margin:16px 0;background:linear-gradient(135deg,var(--gold),#ff9040);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 20px rgba(255,215,0,0.4))}
+.score-sub{color:#9090cc;font-size:1.05rem;margin-bottom:32px}
+.score-msg{font-family:'Orbitron',sans-serif;font-size:1rem;padding:16px 24px;border-radius:12px;margin-bottom:28px;letter-spacing:1px;line-height:1.6}
+
+/* RESULTS BREAKDOWN */
+.results-list{margin:28px 0;display:flex;flex-direction:column;gap:10px;text-align:left}
+.result-item{background:rgba(20,10,50,0.6);border-radius:10px;padding:14px 18px;border-left:3px solid transparent;font-size:0.9rem;line-height:1.5}
+.result-item.r-correct{border-color:var(--success)}
+.result-item.r-wrong{border-color:var(--danger)}
+.result-item .r-q{color:#d0d0f0;font-weight:600;margin-bottom:4px}
+.result-item .r-a{font-size:0.85rem}
+.result-item.r-correct .r-a{color:var(--success)}
+.result-item.r-wrong .r-a{color:var(--danger)}
+.result-item .r-correct-ans{font-size:0.82rem;color:rgba(0,255,179,0.6);margin-top:2px}
+
+/* RETRY */
+.btn-retry{background:linear-gradient(135deg,var(--gold),#ff9040);border:none;color:#000;padding:14px 40px;border-radius:30px;font-family:'Orbitron',sans-serif;font-weight:900;font-size:0.9rem;letter-spacing:3px;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 24px rgba(255,215,0,0.4);margin-top:8px}
+.btn-retry:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,215,0,0.6)}
+.btn-back{background:transparent;border:1.5px solid var(--gem2);color:var(--gem2);padding:14px 32px;border-radius:30px;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:2px;cursor:pointer;transition:all 0.2s;margin-top:8px;text-decoration:none;display:inline-block}
+.btn-back:hover{background:var(--gem2);color:#000}
+.btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* Confetti pieces */
+.confetti{position:fixed;pointer-events:none;z-index:999;top:0;width:10px;height:10px;border-radius:2px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@media(max-width:480px){
+  .wrap{padding:24px 14px 60px}
+  .q-card{padding:24px 18px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="quiz-header">
+    <div class="gem-icon">💎</div>
+    <h1>GEM QUIZ</h1>
+    <p>How well do you know Alpha GEMS?</p>
+    <div class="badge">5 QUESTIONS · 10 MARKS</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-meta">
+      <span id="qCounter">QUESTION 1 OF 5</span>
+      <span class="score-live" id="scoreLive">SCORE: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- QUESTION AREA -->
+  <div id="quizArea"></div>
+
+  <!-- SCORE CARD -->
+  <div class="score-card" id="scoreCard">
+    <div class="score-gem" id="scoreGem">💎</div>
+    <div class="score-title" id="scoreTitle">QUIZ COMPLETE</div>
+    <div class="score-num" id="scoreNum">0/10</div>
+    <div class="score-sub" id="scoreSub"></div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <div class="results-list" id="resultsList"></div>
+    <div class="btn-row">
+      <button class="btn-retry" onclick="Quiz.restart()">↺ TRY AGAIN</button>
+      <a href="index.html" class="btn-back">← HOME</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "When was the Alpha GEMS X account created?",
+    opts: ["January 2021", "April 2022", "March 2023", "June 2021"],
+    a: 1,
+    color: "#7b2fff",
+    emoji: "📅",
+    explanation: "Alpha GEMS joined X (Twitter) in April 2022!"
+  },
+  {
+    q: "What is the commonly used slogan of Alpha GEMS?",
+    opts: ["Alpha or Nothing", "GEMs on Top", "Cave or Never", "Free Since Day One"],
+    a: 1,
+    color: "#00d4ff",
+    emoji: "💎",
+    explanation: "GEMs on Top 💎✊ — the battle cry of the cave!"
+  },
+  {
+    q: "Who joined Alpha GEMS through a random mass invite link from the Udo community in 2022?",
+    opts: ["Emma", "Safz", "Shaq", "Zera"],
+    a: 3,
+    color: "#ffd700",
+    emoji: "🚪",
+    explanation: "Zera joined through a random Udo community invite in 2022!"
+  },
+  {
+    q: "Who was the victim roasted on the Alpha GEMS Discord server on 15 April?",
+    opts: ["Violet", "Emma", "Tulip", "Rice Riddler"],
+    a: 3,
+    color: "#ff6fff",
+    emoji: "😂",
+    explanation: "Rice Riddler got the spotlight on 15 April — that's a GEM moment!"
+  },
+  {
+    q: "Who joined the Alpha GEMS team most recently?",
+    opts: ["Emma", "Violet", "Tulip", "Vespucci"],
+    a: 3,
+    color: "#00ffb3",
+    emoji: "🆕",
+    explanation: "Vespucci is the newest member to join the Alpha GEMS team!"
+  }
+];
+
+const SCORE_MESSAGES = [
+  { min:0,  max:2,  title:"NGMI 📉",         msg:"Keep watching from outside. The cave has high standards.",          gem:"😔", bg:"rgba(255,58,92,0.15)",  border:"rgba(255,58,92,0.4)",  color:"#ff3a5c" },
+  { min:4,  max:6,  title:"ALMOST GEM 🔷",   msg:"You know the vibe. Just need more time in the cave.",               gem:"🔷", bg:"rgba(0,212,255,0.12)",  border:"rgba(0,212,255,0.35)", color:"#00d4ff" },
+  { min:8,  max:8,  title:"SOLID GEM 💎",     msg:"Safz would nod. You clearly pay attention.",                        gem:"💎", bg:"rgba(123,47,255,0.15)", border:"rgba(123,47,255,0.4)", color:"#7b2fff" },
+  { min:10, max:10, title:"GEM WAIFU 👑",     msg:"You are INSIDE the cave. GEMs on Top. Always.",                    gem:"👑", bg:"rgba(255,215,0,0.15)",  border:"rgba(255,215,0,0.4)",  color:"#ffd700" }
+];
+
+const Quiz = {
+  current: 0,
+  score: 0,
+  answers: [],
+  answered: false,
+
+  init(){
+    this.current = 0;
+    this.score = 0;
+    this.answers = [];
+    this.answered = false;
+    document.getElementById('scoreCard').classList.remove('show');
+    document.getElementById('progressWrap').style.display = '';
+    this.render();
+  },
+
+  restart(){
+    this.init();
+  },
+
+  render(){
+    const q = QUESTIONS[this.current];
+    this.answered = false;
+
+    // Progress
+    document.getElementById('qCounter').textContent = `QUESTION ${this.current+1} OF ${QUESTIONS.length}`;
+    document.getElementById('scoreLive').textContent = `SCORE: ${this.score}`;
+    document.getElementById('progressFill').style.width = `${(this.current / QUESTIONS.length)*100}%`;
+
+    // Build card HTML
+    const letters = ['A','B','C','D'];
+    const optsHTML = q.opts.map((o,i)=>`
+      <div class="opt" data-i="${i}" onclick="Quiz.answer(${i})">
+        <div class="opt-letter">${letters[i]}</div>
+        <div class="opt-text">${o}</div>
+      </div>`).join('');
+
+    document.getElementById('quizArea').innerHTML = `
+      <div class="q-card" style="--accent:${q.color}">
+        <div class="q-number" style="color:${q.color}">${q.emoji} &nbsp;QUESTION ${this.current+1} &nbsp;·&nbsp; 2 MARKS</div>
+        <div class="q-text">${q.q}</div>
+        <div class="options">${optsHTML}</div>
+        <div class="feedback" id="feedback"></div>
+        <button class="btn-next" id="btnNext" onclick="Quiz.next()">
+          ${this.current < QUESTIONS.length-1 ? 'NEXT QUESTION →' : 'SEE RESULTS →'}
+        </button>
+      </div>`;
+  },
+
+  answer(i){
+    if(this.answered) return;
+    this.answered = true;
+    const q = QUESTIONS[this.current];
+    const correct = i === q.a;
+    if(correct) this.score += 2;
+
+    this.answers.push({q:q.q, chosen:q.opts[i], correct:q.opts[q.a], isCorrect:correct});
+
+    // Style options
+    const opts = document.querySelectorAll('.opt');
+    opts.forEach(o => o.classList.add('disabled'));
+    opts[i].classList.add(correct ? 'correct' : 'wrong');
+    if(!correct) opts[q.a].classList.add('reveal');
+
+    // Feedback
+    const fb = document.getElementById('feedback');
+    fb.className = `feedback ${correct ? 'correct-fb' : 'wrong-fb'} show`;
+    fb.innerHTML = `
+      <div class="feedback-icon">${correct ? '🎯' : '💀'}</div>
+      <div class="feedback-text">
+        <strong>${correct ? 'Correct! +2 marks' : 'Wrong!'}</strong><br/>
+        ${q.explanation}
+      </div>`;
+
+    // Score live
+    document.getElementById('scoreLive').textContent = `SCORE: ${this.score}`;
+
+    // Next button
+    document.getElementById('btnNext').classList.add('show');
+
+    // Confetti on correct
+    if(correct) this.confetti(q.color);
+  },
+
+  next(){
+    this.current++;
+    if(this.current >= QUESTIONS.length){
+      this.showScore();
+    } else {
+      this.render();
+    }
+  },
+
+  showScore(){
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizArea').innerHTML = '';
+    document.getElementById('progressWrap').style.display = 'none';
+
+    const pct = this.score;
+    const msg = SCORE_MESSAGES.find(m => pct >= m.min && pct <= m.max)
+      || SCORE_MESSAGES[1];
+
+    document.getElementById('scoreGem').textContent = msg.gem;
+    document.getElementById('scoreTitle').textContent = msg.title;
+    document.getElementById('scoreNum').textContent = `${this.score}/10`;
+    document.getElementById('scoreSub').textContent = `You got ${this.score/2} out of ${QUESTIONS.length} questions right`;
+
+    const msgEl = document.getElementById('scoreMsg');
+    msgEl.textContent = msg.msg;
+    msgEl.style.background = msg.bg;
+    msgEl.style.border = `1px solid ${msg.border}`;
+    msgEl.style.color = msg.color;
+    msgEl.style.fontFamily = "'Orbitron',sans-serif";
+
+    // Results breakdown
+    const list = document.getElementById('resultsList');
+    list.innerHTML = this.answers.map((a,i)=>`
+      <div class="result-item ${a.isCorrect ? 'r-correct' : 'r-wrong'}">
+        <div class="r-q">Q${i+1}: ${a.q}</div>
+        <div class="r-a">Your answer: ${a.chosen} ${a.isCorrect ? '✓' : '✗'}</div>
+        ${!a.isCorrect ? `<div class="r-correct-ans">Correct: ${a.correct}</div>` : ''}
+      </div>`).join('');
+
+    document.getElementById('scoreCard').classList.add('show');
+
+    // Big confetti for high scores
+    if(this.score >= 8){
+      for(let i=0;i<30;i++) setTimeout(()=>this.confetti(), i*80);
+    }
+  },
+
+  confetti(color){
+    const colors = color ? [color,'#ffd700','#00d4ff','#fff'] : ['#7b2fff','#00d4ff','#ffd700','#ff6fff','#00ffb3'];
+    for(let i=0;i<8;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random()*100+'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.width = (6+Math.random()*8)+'px';
+      el.style.height = (6+Math.random()*8)+'px';
+      el.style.animationDuration = (1.5+Math.random()*2)+'s';
+      el.style.animationDelay = Math.random()*0.4+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 3500);
+    }
+  }
+};
+
+// Particles
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W=0,H=0;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const pts=Array.from({length:70},()=>({
+    x:Math.random(),y:Math.random(),r:Math.random()*1.5+0.4,
+    dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,
+    a:Math.random()*0.5+0.1,c:Math.random()>0.5?'#7b2fff':'#00d4ff'
+  }));
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=(p.dx/W);p.y+=(p.dy/H);
+      if(p.x<0||p.x>1)p.dx*=-1;if(p.y<0||p.y>1)p.dy*=-1;
+      ctx.globalAlpha=p.a;ctx.fillStyle=p.c;
+      ctx.beginPath();ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);ctx.fill();
+    });
+    ctx.globalAlpha=1;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+Quiz.init();
+</script>
+</body>
+</html>
