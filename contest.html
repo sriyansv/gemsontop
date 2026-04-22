@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tell Your GEM Story | Alpha GEMS Contest</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gem:#7b2fff;--gem2:#00d4ff;--gold:#ffd700;
+  --pink:#ff6fff;--green:#00ffb3;--orange:#ff6b35;
+  --danger:#ff3a5c;--bg:#030308;
+}
+html,body{min-height:100%;background:var(--bg);color:#fff;font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+
+/* ANIMATED BACKGROUND */
+.bg-wrap{position:fixed;inset:0;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orbFloat 8s ease-in-out infinite}
+.orb1{width:500px;height:500px;background:rgba(123,47,255,0.2);top:-100px;left:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:rgba(0,212,255,0.15);top:30%;right:-80px;animation-delay:2s}
+.orb3{width:350px;height:350px;background:rgba(255,111,255,0.12);bottom:10%;left:20%;animation-delay:4s}
+.orb4{width:300px;height:300px;background:rgba(0,255,179,0.1);bottom:-50px;right:30%;animation-delay:6s}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* WRAP */
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:40px 20px 100px}
+
+/* HERO */
+.hero{text-align:center;padding:20px 0 50px;position:relative}
+.prize-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),var(--orange));border-radius:30px;padding:8px 24px;font-family:'Orbitron',sans-serif;font-size:0.8rem;letter-spacing:3px;color:#000;font-weight:900;margin-bottom:24px;animation:badgePulse 2s ease-in-out infinite;box-shadow:0 0 30px rgba(255,215,0,0.5)}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 30px rgba(255,215,0,0.5)}50%{box-shadow:0 0 50px rgba(255,215,0,0.8)}}
+.prize-badge .gem-icon{font-size:1.2rem}
+.hero h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(2rem,6vw,3.8rem);line-height:1.05;margin-bottom:16px;letter-spacing:2px}
+.hero h1 .line1{display:block;background:linear-gradient(135deg,#fff,var(--gem2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .line2{display:block;background:linear-gradient(135deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#b0b0d0;font-size:clamp(1rem,2.5vw,1.2rem);line-height:1.6;max-width:580px;margin:0 auto 14px}
+.hero .rules-strip{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.rule-chip{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:8px 18px;font-size:0.85rem;color:#c0c0e0;display:flex;align-items:center;gap:6px}
+.rule-chip span{font-size:1rem}
+
+/* TIMER */
+.timer-wrap{background:linear-gradient(135deg,rgba(123,47,255,0.2),rgba(0,212,255,0.15));border:1px solid rgba(123,47,255,0.4);border-radius:16px;padding:20px;text-align:center;margin-bottom:40px}
+.timer-label{font-family:'Orbitron',sans-serif;font-size:0.7rem;color:var(--gem2);letter-spacing:4px;margin-bottom:12px}
+.timer-blocks{display:flex;gap:16px;justify-content:center;align-items:center}
+.t-block{text-align:center}
+.t-num{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;line-height:1;background:rgba(0,0,0,0.3);border-radius:10px;padding:8px 16px;min-width:70px;display:block}
+.t-label{font-size:0.7rem;color:#8080aa;letter-spacing:2px;margin-top:4px}
+.t-sep{font-family:'Orbitron',sans-serif;font-size:2rem;color:var(--gem);opacity:0.6;margin-bottom:12px}
+
+/* SUBMIT FORM */
+.form-card{background:linear-gradient(145deg,rgba(20,10,50,0.9),rgba(8,4,25,0.95));border:1px solid rgba(123,47,255,0.4);border-radius:24px;padding:36px 32px;margin-bottom:48px;position:relative;overflow:hidden}
+.form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gem),var(--gem2),var(--pink),var(--gold),var(--green))}
+.form-title{font-family:'Orbitron',sans-serif;font-size:1.3rem;color:#fff;margin-bottom:6px;font-weight:700}
+.form-sub{color:#8080aa;font-size:0.95rem;margin-bottom:28px}
+
+.field{margin-bottom:20px}
+.field label{display:block;font-family:'Orbitron',sans-serif;font-size:0.72rem;color:var(--gem2);letter-spacing:3px;margin-bottom:8px}
+.field input,.field textarea{width:100%;background:rgba(10,5,30,0.8);border:1.5px solid rgba(123,47,255,0.3);border-radius:12px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;padding:14px 18px;outline:none;transition:all 0.2s;resize:none}
+.field input:focus,.field textarea:focus{border-color:var(--gem2);box-shadow:0 0 20px rgba(0,212,255,0.2);background:rgba(10,5,30,0.95)}
+.field input::placeholder,.field textarea::placeholder{color:#4a4a6a}
+.char-count{text-align:right;font-size:0.8rem;color:#5a5a7a;margin-top:6px;transition:color 0.2s}
+.char-count.warning{color:var(--gold)}
+.char-count.danger{color:var(--danger)}
+
+.btn-submit{width:100%;padding:18px;background:linear-gradient(135deg,var(--gem),var(--gem2));border:none;border-radius:30px;color:#fff;font-family:'Orbitron',sans-serif;font-weight:900;font-size:1rem;letter-spacing:3px;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 30px rgba(123,47,255,0.5);margin-top:8px;position:relative;overflow:hidden}
+.btn-submit::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gem2),var(--pink));opacity:0;transition:opacity 0.3s}
+.btn-submit:hover::before{opacity:1}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,212,255,0.6)}
+.btn-submit span{position:relative;z-index:1}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+/* SUCCESS MESSAGE */
+.success-msg{display:none;text-align:center;padding:30px;animation:fadeUp 0.5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.success-msg.show{display:block}
+.success-gem{font-size:4rem;animation:bounce 1s ease infinite;display:inline-block;margin-bottom:16px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.success-msg h3{font-family:'Orbitron',sans-serif;font-size:1.5rem;color:var(--green);margin-bottom:10px}
+.success-msg p{color:#9090cc;line-height:1.6}
+
+/* STORIES SECTION */
+.stories-header{text-align:center;margin-bottom:32px}
+.stories-header h2{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,4vw,2.2rem);background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px;font-weight:900}
+.stories-header p{color:#7070aa;font-size:0.95rem}
+
+/* STORY CARDS */
+.stories-grid{display:grid;gap:20px}
+.story-card{background:linear-gradient(145deg,rgba(20,10,50,0.8),rgba(8,4,25,0.9));border-radius:18px;padding:24px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;cursor:default}
+.story-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;border-radius:18px}
+.story-card:hover{transform:translateY(-4px)}
+.story-card.color1{border:1px solid rgba(123,47,255,0.4)}
+.story-card.color1::before{background:radial-gradient(ellipse at top left,rgba(123,47,255,0.1),transparent)}
+.story-card.color1:hover{box-shadow:0 8px 30px rgba(123,47,255,0.3)}
+.story-card.color2{border:1px solid rgba(0,212,255,0.4)}
+.story-card.color2::before{background:radial-gradient(ellipse at top right,rgba(0,212,255,0.1),transparent)}
+.story-card.color2:hover{box-shadow:0 8px 30px rgba(0,212,255,0.3)}
+.story-card.color3{border:1px solid rgba(255,111,255,0.4)}
+.story-card.color3::before{background:radial-gradient(ellipse at bottom left,rgba(255,111,255,0.1),transparent)}
+.story-card.color3:hover{box-shadow:0 8px 30px rgba(255,111,255,0.3)}
+.story-card.color4{border:1px solid rgba(0,255,179,0.4)}
+.story-card.color4::before{background:radial-gradient(ellipse at bottom right,rgba(0,255,179,0.1),transparent)}
+.story-card.color4:hover{box-shadow:0 8px 30px rgba(0,255,179,0.3)}
+.story-card.color5{border:1px solid rgba(255,215,0,0.4)}
+.story-card.color5::before{background:radial-gradient(ellipse at top,rgba(255,215,0,0.1),transparent)}
+.story-card.color5:hover{box-shadow:0 8px 30px rgba(255,215,0,0.3)}
+.story-card:hover::before{opacity:1}
+
+.story-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.story-user{display:flex;align-items:center;gap:10px}
+.story-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;flex-shrink:0}
+.story-name{font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:#fff}
+.story-handle{font-size:0.78rem;color:#6060aa;margin-top:2px}
+.story-time{font-size:0.72rem;color:#4a4a6a;letter-spacing:1px}
+.story-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;line-height:1.7;color:#d0d0f0;margin-bottom:16px}
+.story-bottom{display:flex;justify-content:space-between;align-items:center}
+.story-votes{display:flex;align-items:center;gap:8px}
+.vote-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:0.88rem;color:#c0c0e0;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px}
+.vote-btn:hover{background:rgba(255,215,0,0.15);border-color:var(--gold);color:var(--gold)}
+.vote-btn.voted{background:rgba(255,215,0,0.2);border-color:var(--gold);color:var(--gold)}
+.vote-count{font-weight:700}
+.winner-badge{background:linear-gradient(135deg,var(--gold),var(--orange));border-radius:20px;padding:4px 14px;font-family:'Orbitron',sans-serif;font-size:0.65rem;letter-spacing:2px;color:#000;font-weight:900}
+
+/* WINNER SPOTLIGHT */
+.winner-section{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,107,53,0.1));border:1px solid rgba(255,215,0,0.4);border-radius:20px;padding:30px;margin-bottom:40px;text-align:center;position:relative;overflow:hidden}
+.winner-section::before{content:'👑';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:3rem}
+.winner-section h3{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:4px;margin:28px 0 8px}
+.winner-name{font-family:'Orbitron',sans-serif;font-size:1.8rem;color:#fff;font-weight:900;margin-bottom:6px}
+.winner-prize{font-size:0.9rem;color:rgba(255,215,0,0.7);margin-bottom:16px}
+.winner-story{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;color:#d0d0f0;line-height:1.7;max-width:500px;margin:0 auto}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:#4a4a6a}
+.empty-state .icon{font-size:4rem;margin-bottom:16px;opacity:0.5}
+.empty-state p{font-family:'Orbitron',sans-serif;font-size:0.9rem;letter-spacing:2px}
+
+/* BACK */
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--gem2);text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.75rem;letter-spacing:2px;margin-bottom:32px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);padding:8px 18px;border-radius:20px;transition:all 0.2s}
+.back-link:hover{background:rgba(0,212,255,0.15);border-color:var(--gem2)}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;pointer-events:none;z-index:999;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@media(max-width:480px){
+  .wrap{padding:24px 14px 80px}
+  .form-card{padding:24px 18px}
+  .timer-blocks{gap:10px}
+  .t-num{font-size:1.8rem;min-width:55px;padding:6px 12px}
+  .hero .rules-strip{gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-wrap">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
+<canvas id="particles"></canvas>
+
+<div class="wrap">
+
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="prize-badge">
+      <span class="gem-icon">💎</span>
+      $5 WEEKLY PRIZE
+      <span class="gem-icon">💎</span>
+    </div>
+    <h1>
+      <span class="line1">TELL YOUR</span>
+      <span class="line2">GEM STORY</span>
+    </h1>
+    <p>How did Alpha GEMS change how you see crypto? Tell your story in 50 words or less. Best story wins $5 every week.</p>
+    <div class="rules-strip">
+      <div class="rule-chip"><span>✍️</span> Max 50 words</div>
+      <div class="rule-chip"><span>🏆</span> Weekly winner</div>
+      <div class="rule-chip"><span>💵</span> $5 prize</div>
+      <div class="rule-chip"><span>❤️</span> Featured forever</div>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN TIMER -->
+  <div class="timer-wrap">
+    <div class="timer-label">⏳ THIS WEEK'S CONTEST ENDS IN</div>
+    <div class="timer-blocks">
+      <div class="t-block">
+        <span class="t-num" id="tDays">00</span>
+        <div class="t-label">DAYS</div>
+      </div>
+      <div class="t-sep">:</div>
+      <div class="t-block">
+        <span class="t-num" id="tHours">00</span>
+        <div class="t-label">HOURS</div>
+      </div>
+      <div class="t-sep">:</div>
+      <div class="t-block">
+        <span class="t-num" id="tMins">00</span>
+        <div class="t-label">MINS</div>
+      </div>
+      <div class="t-sep">:</div>
+      <div class="t-block">
+        <span class="t-num" id="tSecs">00</span>
+        <div class="t-label">SECS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT FORM -->
+  <div class="form-card" id="formCard">
+    <div class="form-title">Share Your Story 💎</div>
+    <div class="form-sub">Write from the heart. Max 50 words. One entry per person.</div>
+
+    <div class="field">
+      <label>YOUR NAME</label>
+      <input type="text" id="nameInput" placeholder="Your name or nickname" maxlength="30"/>
+    </div>
+    <div class="field">
+      <label>YOUR X HANDLE</label>
+      <input type="text" id="handleInput" placeholder="@yourhandle" maxlength="30"/>
+    </div>
+    <div class="field">
+      <label>YOUR GEM STORY <span style="color:#4a4a6a">(max 50 words)</span></label>
+      <textarea id="storyInput" rows="5" placeholder="How did Alpha GEMS change how you see crypto? Tell your story..."></textarea>
+      <div class="char-count" id="charCount">0 / 50 words</div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitStory()">
+      <span>💎 SUBMIT MY STORY</span>
+    </button>
+
+    <div class="success-msg" id="successMsg">
+      <div class="success-gem">💎</div>
+      <h3>STORY SUBMITTED!</h3>
+      <p>Your story is now in the running for this week's $5 prize.<br/>Winner announced every Sunday. GEMs on Top! 💎</p>
+    </div>
+  </div>
+
+  <!-- LAST WEEK'S WINNER -->
+  <div class="winner-section" id="winnerSection" style="display:none">
+    <h3>LAST WEEK'S WINNER</h3>
+    <div class="winner-name" id="winnerName"></div>
+    <div class="winner-prize">Won $5 · Week of <span id="winnerWeek"></span></div>
+    <div class="winner-story" id="winnerStory"></div>
+  </div>
+
+  <!-- STORIES -->
+  <div class="stories-header">
+    <h2>THIS WEEK'S STORIES</h2>
+    <p>Vote for your favourite. Most votes wins the $5 prize.</p>
+  </div>
+  <div class="stories-grid" id="storiesGrid">
+    <div class="empty-state">
+      <div class="icon">💎</div>
+      <p>BE THE FIRST TO SHARE YOUR STORY</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   GEM STORY CONTEST
+   ============================================================ */
+
+// Countdown to next Sunday midnight
+function updateTimer(){
+  const now = new Date();
+  const sunday = new Date();
+  sunday.setDate(now.getDate() + (7 - now.getDay()) % 7 || 7);
+  sunday.setHours(23,59,59,0);
+  const diff = sunday - now;
+  if(diff <= 0){ updateTimer(); return; }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  document.getElementById('tDays').textContent = String(d).padStart(2,'0');
+  document.getElementById('tHours').textContent = String(h).padStart(2,'0');
+  document.getElementById('tMins').textContent = String(m).padStart(2,'0');
+  document.getElementById('tSecs').textContent = String(s).padStart(2,'0');
+}
+setInterval(updateTimer, 1000);
+updateTimer();
+
+// Word count
+document.getElementById('storyInput').addEventListener('input', function(){
+  const words = this.value.trim() === '' ? 0 : this.value.trim().split(/\s+/).length;
+  const el = document.getElementById('charCount');
+  el.textContent = words + ' / 50 words';
+  el.className = 'char-count' + (words > 45 ? ' warning' : '') + (words > 50 ? ' danger' : '');
+  if(words > 50){
+    const w = this.value.trim().split(/\s+/);
+    this.value = w.slice(0,50).join(' ');
+    el.textContent = '50 / 50 words';
+  }
+});
+
+// Stories storage
+let stories = JSON.parse(localStorage.getItem('gemStories') || '[]');
+let voted = JSON.parse(localStorage.getItem('gemVoted') || '[]');
+let submitted = localStorage.getItem('gemSubmitted') === 'true';
+
+const COLORS = ['color1','color2','color3','color4','color5'];
+const AVATARBG = ['#7b2fff','#00d4ff','#ff6fff','#00ffb3','#ffd700','#ff3a5c','#ff6b35'];
+
+function getInitials(name){
+  return name.trim().split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2) || '💎';
+}
+
+function timeAgo(ts){
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff/60000);
+  const h = Math.floor(diff/3600000);
+  const d = Math.floor(diff/86400000);
+  if(m < 1) return 'just now';
+  if(m < 60) return m + 'm ago';
+  if(h < 24) return h + 'h ago';
+  return d + 'd ago';
+}
+
+function renderStories(){
+  const grid = document.getElementById('storiesGrid');
+  if(stories.length === 0){
+    grid.innerHTML = `<div class="empty-state"><div class="icon">💎</div><p>BE THE FIRST TO SHARE YOUR STORY</p></div>`;
+    return;
+  }
+  const sorted = [...stories].sort((a,b)=>b.votes-a.votes);
+  grid.innerHTML = sorted.map((s,i)=>{
+    const color = COLORS[i % COLORS.length];
+    const avatarBg = AVATARBG[i % AVATARBG.length];
+    const initials = getInitials(s.name);
+    const hasVoted = voted.includes(s.id);
+    const isWinner = i === 0 && sorted[0].votes > 0;
+    return `
+    <div class="story-card ${color}" id="card-${s.id}">
+      <div class="story-top">
+        <div class="story-user">
+          <div class="story-avatar" style="background:${avatarBg}">${initials}</div>
+          <div>
+            <div class="story-name">${s.name}</div>
+            <div class="story-handle">${s.handle || '@gem'}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          ${isWinner ? '<div class="winner-badge">👑 LEADING</div>' : ''}
+          <div class="story-time">${timeAgo(s.timestamp)}</div>
+        </div>
+      </div>
+      <div class="story-text">"${s.story}"</div>
+      <div class="story-bottom">
+        <div class="story-votes">
+          <button class="vote-btn ${hasVoted?'voted':''}" onclick="vote('${s.id}')">
+            💎 <span class="vote-count">${s.votes}</span> ${hasVoted?'VOTED':'VOTE'}
+          </button>
+        </div>
+        <div style="font-size:0.75rem;color:#4a4a6a;font-family:'Orbitron',sans-serif;letter-spacing:1px">
+          ${i === 0 && stories.length > 1 ? '🏆 TOP STORY' : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function vote(id){
+  if(voted.includes(id)){
+    // unvote
+    voted = voted.filter(v=>v!==id);
+    const s = stories.find(s=>s.id===id);
+    if(s) s.votes = Math.max(0, s.votes-1);
+  } else {
+    voted.push(id);
+    const s = stories.find(s=>s.id===id);
+    if(s) s.votes++;
+    confetti('#ffd700');
+  }
+  localStorage.setItem('gemVoted', JSON.stringify(voted));
+  localStorage.setItem('gemStories', JSON.stringify(stories));
+  renderStories();
+}
+
+function submitStory(){
+  const name = document.getElementById('nameInput').value.trim();
+  const handle = document.getElementById('handleInput').value.trim();
+  const story = document.getElementById('storyInput').value.trim();
+
+  if(!name){ alert('Please enter your name!'); return; }
+  if(!story){ alert('Please write your story!'); return; }
+  const words = story.split(/\s+/).length;
+  if(words > 50){ alert('Story must be 50 words or less!'); return; }
+  if(submitted){ alert('You have already submitted a story this week! 💎'); return; }
+
+  const entry = {
+    id: Date.now().toString(),
+    name,
+    handle: handle.startsWith('@') ? handle : (handle ? '@'+handle : '@gem'),
+    story,
+    votes: 0,
+    timestamp: Date.now()
+  };
+
+  stories.push(entry);
+  submitted = true;
+  localStorage.setItem('gemStories', JSON.stringify(stories));
+  localStorage.setItem('gemSubmitted', 'true');
+
+  // Show success
+  document.getElementById('nameInput').value = '';
+  document.getElementById('handleInput').value = '';
+  document.getElementById('storyInput').value = '';
+  document.getElementById('charCount').textContent = '0 / 50 words';
+
+  const btn = document.getElementById('submitBtn');
+  btn.style.display = 'none';
+  document.getElementById('successMsg').classList.add('show');
+
+  renderStories();
+
+  // Big confetti
+  for(let i=0;i<20;i++){
+    setTimeout(()=>confetti(),i*80);
+  }
+}
+
+function confetti(color){
+  const colors = color ? [color,'#00d4ff','#ff6fff'] : ['#7b2fff','#00d4ff','#ffd700','#ff6fff','#00ffb3','#ff6b35'];
+  for(let i=0;i<6;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}vw;
+      width:${6+Math.random()*8}px;
+      height:${6+Math.random()*8}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*0.3}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 3500);
+  }
+}
+
+// Particles
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W=0, H=0;
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  const pts = Array.from({length:60}, ()=>({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.5+0.3,
+    dx:(Math.random()-0.5)*0.3,
+    dy:(Math.random()-0.5)*0.3,
+    a:Math.random()*0.4+0.1,
+    c:['#7b2fff','#00d4ff','#ff6fff','#00ffb3','#ffd700'][Math.floor(Math.random()*5)]
+  }));
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.dx/W; p.y+=p.dy/H;
+      if(p.x<0||p.x>1) p.dx*=-1;
+      if(p.y<0||p.y>1) p.dy*=-1;
+      ctx.globalAlpha=p.a; ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Init
+renderStories();
+if(submitted){
+  document.getElementById('submitBtn').style.display='none';
+  document.getElementById('successMsg').classList.add('show');
+}
+</script>
+</body>
+</html>
