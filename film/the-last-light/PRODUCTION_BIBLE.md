@@ -90,3 +90,10 @@ The score is original, synthesised in code or taken from a CC0 source. The three
 - **Regenerate:** `cd remotion && npm install && npm run sheets && npm run rigtest`
 - **Comparison:** `remotion/out/rig-compare.png` (rig next to the supplied sheet and avatars)
 - **Status:** v0.4, awaiting final approval before the film is produced.
+
+## 7. Production: first cut
+- **Rig v0.4 locked** (git tag `rig-v0.4-approved`).
+- **Film code:** `remotion/src/film/` (`City.tsx`, `Pip.tsx`, `fx.tsx`, `lib.ts`, `timing.ts`, `scenes/S1–S5`, `Film.tsx`)
+- **Score:** `remotion/scripts/score.py` writes `public/audio/score.wav`. It is original, synthesised locally, and frame-locked to the motif. Total silence runs from 27.00 to 32.17 s.
+- **Render:** `cd remotion && npm install && npm run film` produces `out/the-last-light-first-cut.mp4` (1920×1080, 30 fps, 1,350 frames).
+- **Per-scene previews:** compositions `S1`–`S5` in `npm run studio`.

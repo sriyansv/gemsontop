@@ -5,7 +5,9 @@
   "scripts": {
     "studio": "remotion studio",
     "sheets": "remotion still RigTurnaround out/rig-turnaround.png && remotion still RigPoses out/rig-poses.png && remotion still RigCompare out/rig-compare.png",
-    "rigtest": "remotion render RigTest out/rig-test.mp4"
+    "rigtest": "remotion render RigTest out/rig-test.mp4",
+    "score": "python3 scripts/score.py public/audio/score.wav",
+    "film": "npm run score && remotion render Film out/the-last-light-first-cut.mp4 --crf=22"
   },
   "dependencies": {
     "@remotion/cli": "4.0.290",
