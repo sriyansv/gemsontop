@@ -140,7 +140,15 @@ At 30 fps that is 81,000 frames. Each scene is its own Remotion composition (`Sc
 
 ---
 
-## 6. Approval needed before Phase 2–4
-- [ ] Eye solution: glow through the lenses, plus the glasses-off reveal in Scene 13
-- [ ] Cigarette: keep static (default), swap for a toothpick, or omit
-- [ ] Flat ink 2D style (refs A/B/E) rather than the sheet's 3D render look
+## 6. Approved decisions (locked)
+- [x] **Eyes:** dark sunglasses with faint white eye-glow through the lenses. The glow brightens slightly when he is calculating and in emotional beats. **Scene 13 is the first and only time he removes them.**
+- [x] **Toothpick** replaces the cigarette. It is static and subtle, with no smoking anywhere in the film.
+- [x] **Style:** flat 2D, clean ink outlines, simple cel shading, painted multi-layer backgrounds.
+
+### Scene 13 reveal: sound rule
+When he removes the sunglasses, **the score stops completely**, along with ambience and sound effects. The reveal plays in pure silence: just his eyes, his expression and the room. Plan: about 0.5 s of anticipation (hand to glasses, score already thinning), then the glasses come off, then **4–6 s of total silence** on the close-up of the glowing eyes. Sound returns only on Pip's line, with no music until the broadcast.
+
+## 7. Character rig (Phase 1b, awaiting approval)
+- Code: `remotion/src/rig/` (`FrogBoss.tsx`, `geometry.ts`, `expressions.ts`, `poses.ts`, `tokens.ts`)
+- Sheets: `remotion/out/rig-turnaround.png`, `remotion/out/rig-poses.png`; motion test `remotion/out/rig-test.mp4`
+- Regenerate: `cd remotion && npm install && npm run sheets && npm run rigtest`
