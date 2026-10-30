@@ -5,7 +5,7 @@ import {POSES} from '../rig/poses';
 import {C} from '../rig/tokens';
 import {FONT} from './Sheet';
 
-// 12 s motion test: turnaround, blink + lip-sync, calculating glow, and the Scene 13 glasses-off beat.
+// 12 s motion test: turnaround, blink + lip-sync, calculating glow, and the Scene 4 glasses-off beat.
 export const RigTest: React.FC = () => {
 	const f = useCurrentFrame();
 	const ease = Easing.inOut(Easing.cubic);
@@ -15,7 +15,7 @@ export const RigTest: React.FC = () => {
 	const glow = interpolate(f, [200, 215, 250, 265], [0.35, 1, 1, 0.35], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 	const reveal = f >= 300;
 	const pose = f < 270 ? POSES.pockets : f < 300 ? POSES.adjustGlasses : POSES.holdGlasses;
-	const label = f < 125 ? 'TURNAROUND' : f < 200 ? 'BLINK + LIP-SYNC' : f < 270 ? 'CALCULATING (GLOW)' : 'SCENE 13 · THE REVEAL';
+	const label = f < 125 ? 'TURNAROUND' : f < 200 ? 'BLINK + LIP-SYNC' : f < 270 ? 'CALCULATING (GLOW)' : 'SCENE 4 · THE REVEAL';
 	return (
 		<AbsoluteFill style={{background: C.bg, fontFamily: FONT}}>
 			<AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>

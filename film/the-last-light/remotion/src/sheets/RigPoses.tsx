@@ -22,9 +22,9 @@ const ROW: Row[] = [
 	{label: 'SHRUG', turn: -10, pose: 'shrug', ex: 'smirk'},
 	{label: 'WALK · CONTACT', turn: 90, pose: walkPose(0.25), ex: 'neutral'},
 	{label: 'WALK · PASSING', turn: 70, pose: walkPose(0), ex: 'neutral'},
-	{label: 'SITTING (SCENES 2 + 18)', turn: 20, pose: 'sit', ex: 'neutral', chair: true},
-	{label: 'SCENE 13 · GLASSES IN HAND', turn: 15, pose: 'holdGlasses', ex: 'heartbroken', glassesOff: true},
-	{label: 'SCENE 18 · AT PEACE', turn: -15, pose: 'pockets', ex: 'warm'},
+	{label: 'SITTING (SCENE 2)', turn: 30, pose: 'sit', ex: 'neutral', chair: true},
+	{label: 'SCENE 4 · GLASSES IN HAND', turn: 15, pose: 'holdGlasses', ex: 'heartbroken', glassesOff: true},
+	{label: 'SCENE 5 · AT PEACE', turn: -15, pose: 'pockets', ex: 'warm'},
 ];
 
 export const RigPoses: React.FC = () => (

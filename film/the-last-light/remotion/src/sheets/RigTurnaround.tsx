@@ -52,7 +52,7 @@ export const RigTurnaround: React.FC = () => (
 				<li>White eye-glow behind dark lenses</li>
 				<li>Triangle vest · white shirt · black tie</li>
 				<li>Subtle static toothpick (no smoking)</li>
-				<li>Glasses come off only in Scene 13</li>
+				<li>Glasses come off only in Scene 4</li>
 			</ul>
 		</div>
 		{FACES.map(([label, ex], i) => (
@@ -72,7 +72,7 @@ export const RigTurnaround: React.FC = () => (
 			<FrogBoss crop="head" turn={40} expression="smirk" style={{height: '100%'}} />
 			<FrogBoss crop="head" turn={90} expression="talking" style={{height: '100%'}} />
 		</Panel>
-		<Panel x={1418} y={890} w={446} h={160} label="SCENE 13 · GLASSES OFF (REVEAL)">
+		<Panel x={1418} y={890} w={446} h={160} label="SCENE 4 · GLASSES OFF (REVEAL)">
 			<FrogBoss crop="head" glassesOff expression="heartbroken" style={{height: '100%'}} />
 			<FrogBoss crop="head" glassesOff expression="warm" style={{height: '100%'}} />
 		</Panel>

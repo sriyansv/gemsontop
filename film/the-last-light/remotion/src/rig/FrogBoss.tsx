@@ -132,13 +132,13 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 		const kind = a.arm.hand2 ?? 'mitt';
 		return (
 			<g key={a.s}>
-				<polyline points={pts} fill="none" stroke={C.ink} strokeWidth={46 + INK * 2} strokeLinejoin="round" strokeLinecap="round" />
-				<polyline points={pts} fill="none" stroke={C.shirt} strokeWidth={46} strokeLinejoin="round" strokeLinecap="round" />
+				<polyline points={pts} fill="none" stroke={C.ink} strokeWidth={38 + INK * 2} strokeLinejoin="round" strokeLinecap="round" />
+				<polyline points={pts} fill="none" stroke={C.shirt} strokeWidth={38} strokeLinejoin="round" strokeLinecap="round" />
 				<polyline points={`${(sh.x + el.x) / 2 + 8},${(sh.y + el.y) / 2} ${el.x + 6},${el.y + 4}`} fill="none" stroke={C.shirtShadow} strokeWidth={8} strokeLinecap="round" />
 				{kind === 'pocket' ? (
 					<path d={`M${hd.x - 30},${hd.y - 4} Q${hd.x},${hd.y + 10} ${hd.x + 30},${hd.y - 4} L${hd.x + 30},${hd.y + 26} L${hd.x - 30},${hd.y + 26} Z`} fill={C.pants} stroke={C.ink} strokeWidth={INK - 2} strokeLinejoin="round" />
 				) : (
-					<circle cx={hd.x} cy={hd.y} r={23} fill={C.shirt} stroke={C.ink} strokeWidth={INK - 1} />
+					<circle cx={hd.x} cy={hd.y} r={20} fill={C.shirt} stroke={C.ink} strokeWidth={INK - 1} />
 				)}
 				{kind === 'clasp' || (clasp && a.s === 1) ? null : (
 					<Hand x={hd.x} y={hd.y + 6} kind={kind} dirX={hd.x - el.x} dirY={hd.y - el.y} mirror={a.s * (Math.cos(rad(turn)) >= 0 ? 1 : -1)} />
@@ -241,6 +241,25 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 		);
 	};
 
+	const legNodes = (
+		<>
+			{legs.map(({s, P, toe}) => {
+				const pts = P.map((p) => `${p.x},${p.y}`).join(' ');
+				const ankle = P[2];
+				return (
+					<g key={s}>
+						<polyline points={pts} fill="none" stroke={C.ink} strokeWidth={74 + INK * 2} strokeLinejoin="round" strokeLinecap="round" />
+						<polyline points={pts} fill="none" stroke={C.pants} strokeWidth={74} strokeLinejoin="round" strokeLinecap="round" />
+						<polyline points={`${P[1].x + 14},${P[1].y - 10} ${ankle.x + 14},${ankle.y - 12}`} fill="none" stroke="#2A2C2E" strokeWidth={6} strokeLinecap="round" />
+						<ellipse cx={toe.x} cy={toe.y + 4} rx={38 + 24 * sinT} ry={20} fill="#050505" stroke={C.ink} strokeWidth={INK - 1} />
+						<ellipse cx={toe.x - 10} cy={toe.y - 3} rx={14 + 8 * sinT} ry={5} fill="#fff" opacity={0.45} />
+					</g>
+				);
+			})}
+
+		</>
+	);
+
 	const vX = onTorso(0, 300, turn);
 	const front = vX.c > -0.15;
 
@@ -269,21 +288,7 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 			{/* Far arms */}
 			<g transform={`translate(0, ${dy})`}>{arms.filter((a) => a.behind).map(drawArm)}</g>
 
-			{/* Legs */}
-			{legs.map(({s, P, toe}) => {
-				const pts = P.map((p) => `${p.x},${p.y}`).join(' ');
-				const ankle = P[2];
-				return (
-					<g key={s}>
-						<polyline points={pts} fill="none" stroke={C.ink} strokeWidth={74 + INK * 2} strokeLinejoin="round" strokeLinecap="round" />
-						<polyline points={pts} fill="none" stroke={C.pants} strokeWidth={74} strokeLinejoin="round" strokeLinecap="round" />
-						<polyline points={`${P[1].x + 14},${P[1].y - 10} ${ankle.x + 14},${ankle.y - 12}`} fill="none" stroke="#2A2C2E" strokeWidth={6} strokeLinecap="round" />
-						<ellipse cx={toe.x} cy={toe.y + 4} rx={38 + 24 * sinT} ry={20} fill="#050505" stroke={C.ink} strokeWidth={INK - 1} />
-						<ellipse cx={toe.x - 10} cy={toe.y - 3} rx={14 + 8 * sinT} ry={5} fill="#fff" opacity={0.45} />
-					</g>
-				);
-			})}
-
+			{ps.legsFront ? null : legNodes}
 			<g transform={`translate(0, ${dy})`}>
 				{/* Hips */}
 				<ellipse cx={CX} cy={470} rx={128} ry={36} fill={C.pants} stroke={C.ink} strokeWidth={INK} />
@@ -327,6 +332,8 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 							);
 						})
 					: null}
+
+				{ps.legsFront ? <g transform={`translate(0, ${-dy})`}>{legNodes}</g> : null}
 
 				{/* Near arms (below the head) */}
 				{arms.filter((a) => !a.behind && a.arm.hand2 !== 'pinch').map(drawArm)}

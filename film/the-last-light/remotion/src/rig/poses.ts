@@ -3,10 +3,10 @@ import type {P3} from './geometry';
 // Arm targets are offsets from the shoulder: x outward (mirrored per side), y down, z toward camera.
 export type Arm = {elbow: P3; hand: P3; hand2?: 'pocket' | 'mitt' | 'point' | 'clasp' | 'palmUp' | 'pinch' | 'glasses'};
 export type Leg = {knee: P3; ankle: P3};
-export type Pose = {left: Arm; right: Arm; legL: Leg; legR: Leg; bodyDy: number};
+export type Pose = {left: Arm; right: Arm; legL: Leg; legR: Leg; bodyDy: number; legsFront?: boolean};
 
 const standLeg: Leg = {knee: {x: 0, y: 55, z: 4}, ankle: {x: -2, y: 108, z: 0}};
-const pocket: Arm = {elbow: {x: 26, y: 88, z: -10}, hand: {x: -22, y: 176, z: 20}, hand2: 'pocket'};
+const pocket: Arm = {elbow: {x: 34, y: 86, z: -10}, hand: {x: -26, y: 172, z: 22}, hand2: 'pocket'};
 
 // "left" = screen-left in front view (his right hand).
 export const POSES = {
@@ -38,9 +38,10 @@ export const POSES = {
 	sit: {
 		left: {elbow: {x: 34, y: 80, z: 40}, hand: {x: 22, y: 120, z: 110}, hand2: 'mitt'},
 		right: {elbow: {x: 34, y: 80, z: 40}, hand: {x: 22, y: 120, z: 110}, hand2: 'mitt'},
-		legL: {knee: {x: 4, y: 12, z: 92}, ankle: {x: 6, y: 74, z: 96}},
-		legR: {knee: {x: 4, y: 12, z: 92}, ankle: {x: 6, y: 74, z: 96}},
+		legL: {knee: {x: 8, y: 26, z: 118}, ankle: {x: 10, y: 92, z: 122}},
+		legR: {knee: {x: 8, y: 26, z: 118}, ankle: {x: 10, y: 92, z: 122}},
 		bodyDy: 48,
+		legsFront: true,
 	},
 } satisfies Record<string, Pose>;
 

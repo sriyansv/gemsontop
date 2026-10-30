@@ -13,7 +13,7 @@ export const SheetFrame: React.FC<{title: string; subtitle: string; children: Re
 		<div style={{position: 'absolute', right: 56, top: 46, fontSize: 16, letterSpacing: 3, color: '#6F8383'}}>{subtitle}</div>
 		{children}
 		<div style={{position: 'absolute', left: 56, bottom: 22, fontSize: 13, letterSpacing: 2, color: '#56696A'}}>
-			THE LAST LIGHT — RIG v0.1 · FAN FILM INSPIRED BY ELYZIUMA · NOT OFFICIAL
+			THE LAST LIGHT — RIG v0.2 · FAN FILM INSPIRED BY ELYZIUMA · NOT OFFICIAL
 		</div>
 	</AbsoluteFill>
 );

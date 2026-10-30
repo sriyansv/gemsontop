@@ -31,10 +31,15 @@ const headTop = (u: number) => {
 	return SIDE_Y + Math.pow((a - SIDE_HW) / (HEAD_HW - SIDE_HW), 1 / 0.55) * (HEAD_BOTTOM - SIDE_Y);
 };
 
+/** Muzzle bulge around mouth height; shows in profile so the side view isn't a plain dome. */
+export const snout = (y: number) => 30 * Math.exp(-(((y - 195) / 52) ** 2));
+const profile = (y: number, sinFacing: number, sinTurn: number) =>
+	snout(y) * sinTurn * Math.pow(Math.max(0, sinFacing * Math.sign(sinTurn)), 3);
+
 /** Screen x and facing (cos) of a head feature at azimuth phi, height y. */
 export const onHead = (phi: number, y: number, turn: number, out = 0) => {
 	const a = rad(phi + turn);
-	return {x: CX + (headHW(y) + out) * Math.sin(a), c: Math.cos(a)};
+	return {x: CX + (headHW(y) + out) * Math.sin(a) + profile(y, Math.sin(a), Math.sin(rad(turn))), c: Math.cos(a)};
 };
 
 /** Head outline with the two brow bumps from the sheet, offset by (dx, dy). */
@@ -47,7 +52,8 @@ export const headPath = (turn: number, dx = 0, dy = 0) => {
 	for (let u = -HEAD_HW; u <= HEAD_HW; u += 3) {
 		let y = headTop(u);
 		for (const b of bumps) y -= b.h * Math.exp(-(((u - b.u) / 22) ** 2));
-		pts.push(`${(CX + u + dx).toFixed(1)},${(y + dy).toFixed(1)}`);
+		const px = u + profile(y, u / HEAD_HW, Math.sin(rad(turn)));
+		pts.push(`${(CX + px + dx).toFixed(1)},${(y + dy).toFixed(1)}`);
 	}
 	return `M${pts.join(' L')} L${CX + HEAD_HW + dx},${HEAD_BOTTOM + 20 + dy} L${CX - HEAD_HW + dx},${HEAD_BOTTOM + 20 + dy} Z`;
 };
