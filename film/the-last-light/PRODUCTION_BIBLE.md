@@ -89,4 +89,4 @@ The score is original, synthesised in code or taken from a CC0 source. The three
 - **Sheets:** `remotion/out/rig-turnaround.png` and `rig-poses.png`. Motion test: `rig-test.mp4`.
 - **Regenerate:** `cd remotion && npm install && npm run sheets && npm run rigtest`
 - **Comparison:** `remotion/out/rig-compare.png` (rig next to the supplied sheet and avatars)
-- **Status:** v0.3, awaiting final approval before the film is produced.
+- **Status:** v0.4, awaiting final approval before the film is produced.

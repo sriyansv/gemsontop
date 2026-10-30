@@ -20,7 +20,7 @@ const VIEWS: {label: string; turn: number; crop: [number, number, number, number
 ];
 
 export const RigCompare: React.FC = () => (
-	<SheetFrame title="RIG v0.3 vs ORIGINAL REFERENCES" subtitle="TOP: SUPPLIED SHEET · MIDDLE: RIG · BOTTOM: AVATAR REFS vs RIG">
+	<SheetFrame title="RIG v0.4 vs ORIGINAL REFERENCES" subtitle="TOP: SUPPLIED SHEET · MIDDLE: RIG · BOTTOM: AVATAR REFS vs RIG">
 		{VIEWS.map((v, i) => (
 			<React.Fragment key={v.label}>
 				<Panel x={56 + i * 330} y={105} w={318} h={330} label={`SHEET · ${v.label}`}>

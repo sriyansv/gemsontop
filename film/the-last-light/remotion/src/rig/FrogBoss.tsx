@@ -173,14 +173,16 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 			return {s, P, toe};
 		})
 		.sort((a, b) => a.toe.depth - b.toe.depth);
-	const sinT = Math.abs(Math.sin(rad(turn)));
 
 	// ---- Face -------------------------------------------------------------
+	const sinT = Math.abs(Math.sin(rad(turn)));
 	const mouthPhis = [-55, -27, 0, 27, 55];
 	const mouthPts = mouthPhis
 		.map((phi, i) => {
-			const p = onHead(phi, 202, turn, 12);
-			return {x: p.x, y: 202 + ex.mouth[i], c: p.c};
+			const p = onHead(phi, 202, turn, 12 - 8 * sinT);
+			// In profile the lip droops toward the far corner instead of reading as a straight bar.
+			const back = 1 - Math.abs(Math.sin(rad(phi + turn)));
+			return {x: p.x, y: 202 + ex.mouth[i] + sinT * 22 * back, c: p.c};
 		})
 		.filter((p) => p.c > -0.2);
 	const smooth = (pts: {x: number; y: number}[]) => {
@@ -215,10 +217,11 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 	});
 	const toothTip = onHead(-55, 202, turn, 12);
 
+	const LIP = 28;
 	const lip = (d: string) => (
 		<>
-			<path d={d} fill="none" stroke={C.ink} strokeWidth={24 + INK * 2} strokeLinecap="round" strokeLinejoin="round" />
-			<path d={d} fill="none" stroke={C.lips} strokeWidth={24} strokeLinecap="round" strokeLinejoin="round" />
+			<path d={d} fill="none" stroke={C.ink} strokeWidth={LIP + INK * 2} strokeLinecap="round" strokeLinejoin="round" />
+			<path d={d} fill="none" stroke={C.lips} strokeWidth={LIP} strokeLinecap="round" strokeLinejoin="round" />
 			<path d={d} fill="none" stroke={C.lipsDark} strokeWidth={5} strokeLinecap="round" transform="translate(0,7)" opacity={0.7} />
 			<path d={d} fill="none" stroke={C.lipsLight} strokeWidth={5} strokeLinecap="round" transform="translate(0,-6)" opacity={0.85} />
 		</>
@@ -377,6 +380,24 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 						lip(smooth(mouthPts))
 					)
 				) : null}
+
+				{/* Lip volume in profile: the front of the mouth reads as a rounded, drooping bulb */}
+				{sinT > 0.25 && mouthPts.length >= 2 && openV < 0.05
+					? (() => {
+							const tip = mouthPts.reduce((m, p) => (Math.abs(p.x - CX) > Math.abs(m.x - CX) ? p : m));
+							const dir = Math.sign(tip.x - CX);
+							const k = clamp((sinT - 0.25) / 0.6);
+							const cx = tip.x - dir * 4;
+							const cy = tip.y + 3;
+							return (
+								<g>
+									<ellipse cx={cx} cy={cy} rx={14 + 12 * k} ry={18 + 6 * k} fill={C.lips} stroke={C.ink} strokeWidth={INK} />
+									<path d={`M${cx - dir * (14 + 8 * k)},${cy + 1} Q${cx},${cy + 4} ${cx + dir * (10 + 10 * k)},${cy - 1}`} fill="none" stroke={C.lipsDark} strokeWidth={4} strokeLinecap="round" />
+									<ellipse cx={cx - dir * 3} cy={cy - 9} rx={7 + 4 * k} ry={3.5} fill={C.lipsLight} opacity={0.85} />
+								</g>
+							);
+						})()
+					: null}
 
 				{/* Eyes + sunglasses */}
 				{glassesOff

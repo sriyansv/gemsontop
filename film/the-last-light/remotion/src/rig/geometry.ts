@@ -32,7 +32,12 @@ const headTop = (u: number) => {
 };
 
 /** Forward-projecting muzzle (sheet side view): lower face pushes out toward the lips. */
-export const snout = (y: number) => 68 * Math.exp(-(((y - 208) / 38) ** 2));
+const smoothstep = (v: number) => {
+	const t = clamp(v);
+	return t * t * (3 - 2 * t);
+};
+// Rises from just under the lenses, stays full through the lips, tucks into the collar.
+export const snout = (y: number) => 88 * smoothstep((y - 158) / 48) * (1 - smoothstep((y - 236) / 36));
 const profile = (y: number, sinFacing: number, sinTurn: number) =>
 	snout(y) * sinTurn * Math.pow(Math.max(0, sinFacing * Math.sign(sinTurn)), 1.5);
 
@@ -63,7 +68,10 @@ export const TORSO_TOP = 250;
 export const TORSO_BOTTOM = 468;
 export const torsoHW = (y: number) => {
 	const t = clamp((y - TORSO_TOP) / (TORSO_BOTTOM + 10 - TORSO_TOP));
-	return 146 + 30 * Math.pow(Math.sin(Math.PI * t), 0.8);
+	// Stocky pear: fullest low in the belly, rounding in at the hem.
+	const belly = 42 * Math.exp(-(((t - 0.62) / 0.38) ** 2));
+	const tuck = t > 0.8 ? 34 * ((t - 0.8) / 0.2) ** 2 : 0;
+	return 138 + belly - tuck;
 };
 
 export const torsoPath = (dx = 0, dy = 0) => {
