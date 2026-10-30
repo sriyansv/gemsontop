@@ -24,7 +24,7 @@ export type FrogBossProps = {
 	style?: React.CSSProperties;
 };
 
-const VIEWBOX = {full: '0 0 400 620', head: '35 22 330 310'};
+const VIEWBOX = {full: '0 0 400 620', head: '35 55 330 290'};
 
 /** Deterministic per-triangle colour so the vest pattern never "boils" between frames. */
 const vestColor = (i: number, j: number) => {
@@ -179,8 +179,8 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 	const mouthPhis = [-55, -27, 0, 27, 55];
 	const mouthPts = mouthPhis
 		.map((phi, i) => {
-			const p = onHead(phi, 192, turn, 12);
-			return {x: p.x, y: 192 + ex.mouth[i], c: p.c};
+			const p = onHead(phi, 202, turn, 12);
+			return {x: p.x, y: 202 + ex.mouth[i], c: p.c};
 		})
 		.filter((p) => p.c > -0.2);
 	const smooth = (pts: {x: number; y: number}[]) => {
@@ -200,20 +200,20 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 	const lower = shiftPts(mouthPts, openV * 20);
 
 	const lenses = ([-1, 1] as const).map((s) => {
-		const p = onHead(s * 30, 128, turn, 6);
+		const p = onHead(s * 32, 140, turn, 6);
 		const w = 98 * Math.pow(Math.max(0, p.c), 0.85);
-		return {s, x: p.x, y: 128, c: p.c, w};
+		return {s, x: p.x, y: 140, c: p.c, w};
 	});
 	const temples = ([-1, 1] as const).flatMap((s) => {
 		const segs: string[] = [];
 		for (let phi = 56; phi < 108; phi += 6) {
-			const a = onHead(s * phi, 124, turn, 3);
-			const b = onHead(s * (phi + 6), 124, turn, 3);
-			if (a.c > -0.05 || b.c > -0.05) segs.push(`M${a.x},${124} L${b.x},${124}`);
+			const a = onHead(s * phi, 136, turn, 3);
+			const b = onHead(s * (phi + 6), 136, turn, 3);
+			if (a.c > -0.05 || b.c > -0.05) segs.push(`M${a.x},${136} L${b.x},${136}`);
 		}
 		return segs;
 	});
-	const toothTip = onHead(-55, 192, turn, 12);
+	const toothTip = onHead(-55, 202, turn, 12);
 
 	const lip = (d: string) => (
 		<>
@@ -360,8 +360,8 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 				{/* Toothpick (static, subtle) */}
 				{toothpick && toothTip.c > 0.1 ? (
 					<g>
-						<line x1={toothTip.x + 6} y1={202} x2={toothTip.x - 30 * toothTip.c} y2={214} stroke={C.ink} strokeWidth={8} strokeLinecap="round" />
-						<line x1={toothTip.x + 6} y1={202} x2={toothTip.x - 30 * toothTip.c} y2={214} stroke={C.toothpick} strokeWidth={4} strokeLinecap="round" />
+						<line x1={toothTip.x + 6} y1={212} x2={toothTip.x - 30 * toothTip.c} y2={224} stroke={C.ink} strokeWidth={8} strokeLinecap="round" />
+						<line x1={toothTip.x + 6} y1={212} x2={toothTip.x - 30 * toothTip.c} y2={224} stroke={C.toothpick} strokeWidth={4} strokeLinecap="round" />
 					</g>
 				) : null}
 
@@ -387,7 +387,7 @@ export const FrogBoss: React.FC<FrogBossProps> = ({
 								<path key={i} d={d} stroke={C.ink} strokeWidth={8} strokeLinecap="round" />
 							))}
 							{lenses[0].c > 0.05 && lenses[1].c > 0.05 ? (
-								<line x1={lenses[0].x + lenses[0].w / 2 - 4} y1={120} x2={lenses[1].x - lenses[1].w / 2 + 4} y2={120} stroke={C.ink} strokeWidth={9} strokeLinecap="round" />
+								<line x1={lenses[0].x + lenses[0].w / 2 - 4} y1={132} x2={lenses[1].x - lenses[1].w / 2 + 4} y2={132} stroke={C.ink} strokeWidth={9} strokeLinecap="round" />
 							) : null}
 							{lenses.filter((l) => l.c > 0.05).map((l) => (
 								<g key={l.s}>

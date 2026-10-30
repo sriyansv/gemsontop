@@ -6,7 +6,7 @@ export type Leg = {knee: P3; ankle: P3};
 export type Pose = {left: Arm; right: Arm; legL: Leg; legR: Leg; bodyDy: number; legsFront?: boolean};
 
 const standLeg: Leg = {knee: {x: 0, y: 55, z: 4}, ankle: {x: -2, y: 108, z: 0}};
-const pocket: Arm = {elbow: {x: 34, y: 86, z: -10}, hand: {x: -26, y: 172, z: 22}, hand2: 'pocket'};
+const pocket: Arm = {elbow: {x: 12, y: 88, z: -8}, hand: {x: -14, y: 172, z: 14}, hand2: 'pocket'};
 
 // "left" = screen-left in front view (his right hand).
 export const POSES = {

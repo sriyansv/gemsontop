@@ -7,11 +7,11 @@ export const rad = (d: number) => (d * Math.PI) / 180;
 export const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 // --- Head -------------------------------------------------------------------
-export const HEAD_TOP = 55;
+export const HEAD_TOP = 86;
 export const HEAD_BOTTOM = 275;
 export const HEAD_HW = 150;
 // Rounded gumdrop (refs A/E): flat crown, wide corner radius, convex sides flaring to ±150.
-const CROWN = 48;
+const CROWN = 62;
 const CORNER = 58;
 const SIDE_Y = HEAD_TOP + CORNER;
 const SIDE_HW = CROWN + CORNER;
@@ -31,10 +31,10 @@ const headTop = (u: number) => {
 	return SIDE_Y + Math.pow((a - SIDE_HW) / (HEAD_HW - SIDE_HW), 1 / 0.55) * (HEAD_BOTTOM - SIDE_Y);
 };
 
-/** Muzzle bulge around mouth height; shows in profile so the side view isn't a plain dome. */
-export const snout = (y: number) => 30 * Math.exp(-(((y - 195) / 52) ** 2));
+/** Forward-projecting muzzle (sheet side view): lower face pushes out toward the lips. */
+export const snout = (y: number) => 68 * Math.exp(-(((y - 208) / 38) ** 2));
 const profile = (y: number, sinFacing: number, sinTurn: number) =>
-	snout(y) * sinTurn * Math.pow(Math.max(0, sinFacing * Math.sign(sinTurn)), 3);
+	snout(y) * sinTurn * Math.pow(Math.max(0, sinFacing * Math.sign(sinTurn)), 1.5);
 
 /** Screen x and facing (cos) of a head feature at azimuth phi, height y. */
 export const onHead = (phi: number, y: number, turn: number, out = 0) => {
@@ -49,7 +49,7 @@ export const headPath = (turn: number, dx = 0, dy = 0) => {
 		h: 12 * (0.5 + 0.5 * Math.abs(Math.cos(rad(phi + turn)))),
 	}));
 	const pts: string[] = [];
-	for (let u = -HEAD_HW; u <= HEAD_HW; u += 3) {
+	for (let u = -HEAD_HW; u <= HEAD_HW; u += 1.5) {
 		let y = headTop(u);
 		for (const b of bumps) y -= b.h * Math.exp(-(((u - b.u) / 22) ** 2));
 		const px = u + profile(y, u / HEAD_HW, Math.sin(rad(turn)));

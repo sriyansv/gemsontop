@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "studio": "remotion studio",
-    "sheets": "remotion still RigTurnaround out/rig-turnaround.png && remotion still RigPoses out/rig-poses.png",
+    "sheets": "remotion still RigTurnaround out/rig-turnaround.png && remotion still RigPoses out/rig-poses.png && remotion still RigCompare out/rig-compare.png",
     "rigtest": "remotion render RigTest out/rig-test.mp4"
   },
   "dependencies": {
