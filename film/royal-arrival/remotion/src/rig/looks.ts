@@ -23,7 +23,7 @@ export const LOOKS = {
 	royal: {id: 'royal', label: 'THE ROYAL FROG', torso: 'royal', body: '#5E1838', sleeve: '#5E1838', cuff: '#E9B949', collar: 'ermine', tie: false, pants: '#141516', eyes: 'round', mouth: 'tongue', toothpick: false, trim: '#E9B949'},
 	chef: {id: 'chef', label: 'THE CHEF', torso: 'chef', body: '#2A5638', sleeve: '#2A5638', cuff: '#2A5638', collar: 'shirt', tie: false, pants: '#22422D', eyes: 'glowPink', mouth: 'fangs', toothpick: false},
 	exec: {id: 'exec', label: 'THE SHADOW EXEC', torso: 'jacket', body: '#24272A', sleeve: '#24272A', cuff: '#F5F5F5', collar: 'shirt', tie: true, pants: '#141516', eyes: 'glow', mouth: 'lips', toothpick: false},
-	vision: {id: 'vision', label: 'THE 3D VISIONARY', torso: 'jacket', body: '#8E9193', sleeve: '#8E9193', cuff: '#F5F5F5', collar: 'shirt', tie: true, pants: '#3A3C3E', eyes: '3d', mouth: 'lips', toothpick: true},
+	vision: {id: 'vision', label: 'THE 3D VISIONARY', torso: 'jacket', body: '#8E9193', sleeve: '#8E9193', cuff: '#F5F5F5', collar: 'shirt', tie: true, pants: '#3A3C3E', eyes: '3d', mouth: 'lips', toothpick: false},
 } satisfies Record<string, Look>;
 
 export type LookName = keyof typeof LOOKS;

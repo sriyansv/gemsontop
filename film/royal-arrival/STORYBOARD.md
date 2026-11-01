@@ -90,4 +90,9 @@ An original fan film inspired by Elyziuma. It is not official, sponsored or endo
 - `remotion/out/keyart.png`: the final group-pose frame at full resolution (room, throne, lighting style)
 - To re-render: `cd remotion && npm install && npx remotion still CastLineup out/castlineup.png` (and the same for `Storyboard` and `KeyArt`)
 
-**Status:** waiting for your review of the creative direction before full production (Phase 4).
+## 8. Production (Phase 4)
+- **Decisions applied:** no cigarettes anywhere; the toothpick stays on the Frog Boss only; the Casual Frog is crowned; fan labels only.
+- **Code:** `remotion/src/royal/World.tsx` (the whole timeline as functions of the frame), `Actor.tsx` (rig with crown and pan attached to the head and hand), `anim.ts` (walk cycles locked to travel, squash/stretch springs, hops, beat hits, pose blending), `fx.tsx`
+- **Score:** `remotion/scripts/score.py` writes `public/audio/royal-score.wav` (original, 120 BPM, frame-locked)
+- **Preview:** `npm run preview` produces `out/preview-v1.mp4` at half resolution with audio, for review
+- **Final:** `npm run final` produces `out/the-royal-arrival.mp4` at 1920×1080. Not rendered until the preview is approved.

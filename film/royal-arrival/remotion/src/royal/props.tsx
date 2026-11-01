@@ -8,8 +8,8 @@ export const BURGUNDY = '#5E1838';
 export const TEAL = '#0F6B6F';
 
 /** Five-point gold crown. (x, y) = bottom centre, w = width in px. */
-export const Crown: React.FC<{x: number; y: number; w: number; rot?: number; shine?: number}> = ({x, y, w, rot = 0, shine = 0}) => (
-	<svg width={w * 1.4} height={w * 1.2} viewBox="-70 -90 140 120" style={{position: 'absolute', left: x - w * 0.7, top: y - w * 1.2 + w * 0.25, overflow: 'visible', transform: `rotate(${rot}deg)`, transformOrigin: '50% 80%'}}>
+export const Crown: React.FC<{x: number; y: number; w: number; rot?: number; shine?: number; sy?: number}> = ({x, y, w, rot = 0, shine = 0, sy = 1}) => (
+	<svg width={w * 1.4} height={w * 1.2} viewBox="-70 -90 140 120" style={{position: 'absolute', left: x - w * 0.7, top: y - w * 1.2 + w * 0.25, overflow: 'visible', transform: `rotate(${rot}deg) scaleY(${sy})`, transformOrigin: '50% 80%'}}>
 		{shine > 0 ? <circle cx={0} cy={-30} r={80} fill={GOLD_LIGHT} opacity={0.35 * shine} style={{filter: 'blur(12px)'}} /> : null}
 		<path d="M-50,10 L-56,-50 L-30,-24 L-14,-66 L0,-30 L14,-66 L30,-24 L56,-50 L50,10 Z" fill={GOLD} stroke={INK} strokeWidth={5} strokeLinejoin="round" />
 		<path d="M-48,-4 L48,-4" stroke={GOLD_DARK} strokeWidth={5} />
@@ -45,10 +45,12 @@ export const Throne: React.FC<{x: number; y: number; w: number; glow?: number}> 
 );
 
 /** The chef's pan with flames. (x, y) = handle grip. */
-export const FlamePan: React.FC<{x: number; y: number; s: number; flicker: number}> = ({x, y, s, flicker}) => (
-	<svg width={260 * s} height={300 * s} viewBox="-240 -260 260 300" style={{position: 'absolute', left: x - 240 * s, top: y - 260 * s, overflow: 'visible'}}>
+export const FlamePan: React.FC<{x: number; y: number; s: number; flicker: number; flare?: number; rot?: number}> = ({x, y, s, flicker, flare = 0, rot = 0}) => (
+	<svg width={260 * s} height={300 * s} viewBox="-240 -260 260 300" style={{position: 'absolute', left: x - 240 * s, top: y - 260 * s, overflow: 'visible', transform: `rotate(${rot}deg)`, transformOrigin: '92% 87%'}}>
+		<g transform={`translate(-110,-20) scale(1,${1 + 0.45 * flare}) translate(110,20)`}>
 		<path d={`M-150,-20 C-200,${-120 - 20 * flicker} -170,-190 -120,${-250 + 10 * flicker} C-110,-180 -80,-200 -60,${-230 - 14 * flicker} C-60,-150 -30,-140 -40,-20 Z`} fill="#FF7A1A" stroke={INK} strokeWidth={5} />
 		<path d={`M-135,-25 C-160,-100 -140,-150 -112,${-190 + 8 * flicker} C-100,-130 -80,-150 -68,-170 C-70,-110 -55,-90 -60,-25 Z`} fill="#FFC23D" />
+		</g>
 		<ellipse cx={-110} cy={-10} rx={95} ry={22} fill="#2A2C2E" stroke={INK} strokeWidth={6} />
 		<line x1={-20} y1={-8} x2={10} y2={0} stroke={INK} strokeWidth={16} strokeLinecap="round" />
 	</svg>

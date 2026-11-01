@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "scripts": {
     "studio": "remotion studio",
-    "sheets": "remotion still RigTurnaround out/rig-turnaround.png && remotion still RigPoses out/rig-poses.png && remotion still RigCompare out/rig-compare.png",
-    "rigtest": "remotion render RigTest out/rig-test.mp4",
+    "score": "python3 scripts/score.py public/audio/royal-score.wav",
+    "preview": "npm run score && remotion render RoyalArrival out/preview-v1.mp4 --scale=0.5 --crf=24",
+    "final": "npm run score && remotion render RoyalArrival out/the-royal-arrival.mp4 --crf=20",
     "score": "python3 scripts/score.py public/audio/score.wav",
     "film": "npm run score && remotion render Film out/the-last-light-first-cut.mp4 --crf=22"
   },
