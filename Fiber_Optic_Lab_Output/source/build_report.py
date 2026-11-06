@@ -101,7 +101,7 @@ def photo(base, width, height, label):
 def on_page(c, doc):
     c.saveState()
     c.setFont("Body", 8.5); c.setFillColor(GREY)
-    c.drawString(2.1 * cm, 1.2 * cm, "Optical Fiber Communication Lab  ·  Splicing, OTDR & Link Loss")
+    c.drawString(2.1 * cm, 1.2 * cm, "Optical Fiber Communication Lab  ·  Fusion Splicing, OTDR & Link Loss")
     c.drawRightString(A4[0] - 2.1 * cm, 1.2 * cm, "Page %d" % doc.page)
     c.setStrokeColor(RULE); c.setLineWidth(0.5); c.line(2.1 * cm, 1.55 * cm, A4[0] - 2.1 * cm, 1.55 * cm)
     c.restoreState()
@@ -122,7 +122,7 @@ from reportlab.platypus import NextPageTemplate
 S.append(NextPageTemplate("main"))
 S.append(Spacer(1, 1.2 * cm))
 S.append(P("<font color='#F2B48A'>LABORATORY REPORT  ·  OPTICAL FIBER COMMUNICATION</font>", "kicker"))
-S.append(Paragraph("Fiber Optic Splicing, OTDR Testing &amp; Optical Link Loss Measurement",
+S.append(Paragraph("Fusion Splicing, OTDR Testing &amp; Optical Link Loss Measurement",
                    ParagraphStyle("ct", fontName="Head-B", fontSize=26, leading=32, textColor=colors.white, spaceBefore=6, spaceAfter=10)))
 S.append(Paragraph("Optical Fiber Communication Laboratory", ParagraphStyle("cs", fontName="Head-I", fontSize=14, leading=18, textColor=colors.HexColor("#A3AEBD"))))
 S.append(Spacer(1, 0.4 * cm))
@@ -134,13 +134,13 @@ t.setStyle(TableStyle([("LINEBELOW", (1, 0), (1, -1), 0.6, GREY), ("VALIGN", (0,
 S.append(t)
 S.append(Spacer(1, 1.0 * cm))
 S.append(P("<b>Contents</b>"))
-S.append(bullets(["Experiment 1 — Fiber optic splicing", "Experiment 2 — Optical fiber testing using OTDR",
+S.append(bullets(["Experiment 1 — Fusion splicing", "Experiment 2 — Optical fiber testing using OTDR",
                   "Experiment 3 — Optical link loss measurement using OTDR", "References"], numbered=True))
 S.append(PageBreak())
 
 # ---------------- EXPERIMENT 1 ----------------
-S += [P("EXPERIMENT 1", "kicker"), P("Fiber Optic Splicing", "h1")]
-S += [P("Aim", "h2"), P("To study and carry out the joining of two optical fibers by fusion splicing, and to study the mechanical splicing method.")]
+S += [P("EXPERIMENT 1", "kicker"), P("Fusion Splicing", "h1")]
+S += [P("Aim", "h2"), P("To study and carry out the joining of two optical fibers by fusion splicing.")]
 S += [P("Apparatus required", "h2"),
       table([["Item", "Purpose"],
              ["Fusion splicer", "Aligns the fibers and fuses them with an electric arc; has a built-in sleeve heater"],
@@ -149,7 +149,6 @@ S += [P("Apparatus required", "h2"),
              ["Cleaning kit: 99% isopropyl alcohol, lint-free wipes", "Removes dust and oil from bare glass"],
              ["Heat-shrink protection sleeves", "Protect the finished splice"],
              ["Optical fiber cable / pigtails, splice tray", "Fiber to be joined and storage for the joint"],
-             ["Mechanical splice (for the mechanical method)", "Holds two fibers aligned with index-matching gel"],
              ["Scrap bin, safety glasses", "Safe disposal of glass offcuts; eye protection"]], [6.2 * cm, W - 6.2 * cm])]
 S += [P("Theory", "h2"),
       P("An optical fiber is a thin strand of glass. Light travels in the <b>core</b> (about 8–9 µm across in single-mode fiber). The core is surrounded by the <b>cladding</b> "
@@ -160,10 +159,9 @@ S += [P("Theory", "h2"),
         "and well aligned, or part of the light is lost."),
       img("splice_before_after.png", W * 0.85, "Fig. 2 — Two separate fibers (before) and a spliced fiber (after)."),
       P("<b>Fusion splicing</b> melts the two glass ends together with an electric arc. It makes a permanent joint with very low loss (typically below 0.1 dB) and very low "
-        "back-reflection. <b>Mechanical splicing</b> holds the two ends face-to-face in a small housing; an index-matching gel fills the gap. It needs only simple tools, "
-        "but its loss is usually higher (typically a few tenths of a dB)."),
-      img("splice_types.png", W, "Fig. 3 — Fusion splice and mechanical splice (sketches).")]
-S += [CondPageBreak(6 * cm), P("Procedure — fusion splicing", "h2"),
+        "back-reflection. The splicer aligns the fibers with cameras, fuses them, and shows an estimate of the splice loss."),
+]
+S += [CondPageBreak(6 * cm), P("Procedure", "h2"),
       bullets(["<b>Prepare the cable.</b> Check the fiber type on the cable. Cut a clean end and mark the length of jacket to remove.",
                "<b>Remove the outer jacket</b> with a jacket stripper. Cut the aramid yarn with sharp scissors (never with the cleaver).",
                "<b>Slide the heat-shrink protection sleeve</b> onto one fiber and move it well away from the end. This must be done before joining.",
@@ -178,30 +176,25 @@ S += [CondPageBreak(6 * cm), P("Procedure — fusion splicing", "h2"),
                "<b>Heat-shrink the sleeve</b> in the splicer heater and let it cool.",
                "<b>Arrange the protected fiber in the splice tray</b>, coiling spare fiber in large loops.",
                "<b>Test the completed connection</b> with an OTDR or a light source and power meter, and record the measured loss."], numbered=True)]
-grid = Table([[img("step03_sleeve.png", W / 2 - 0.4 * cm, "Fig. 4 — Sleeve placed before joining.", cell=True), img("step06_cleave.png", W / 2 - 0.4 * cm, "Fig. 5 — Cleaving and end-face quality.", cell=True)],
-              [img("step07_place.png", W / 2 - 0.4 * cm, "Fig. 6 — Fibers in the V-grooves.", cell=True), img("step09_arc.png", W / 2 - 0.4 * cm, "Fig. 7 — Arc fusion (illustration).", cell=True)],
-              [img("step11_sleeve_move.png", W / 2 - 0.4 * cm, "Fig. 8 — Sleeve moved over the joint.", cell=True), img("step13_tray.png", W / 2 - 0.4 * cm, "Fig. 9 — Splice tray.", cell=True)]],
+grid = Table([[img("step03_sleeve.png", W / 2 - 0.4 * cm, "Fig. 3 — Sleeve placed before joining.", cell=True), img("step06_cleave.png", W / 2 - 0.4 * cm, "Fig. 4 — Cleaving and end-face quality.", cell=True)],
+              [img("step07_place.png", W / 2 - 0.4 * cm, "Fig. 5 — Fibers in the V-grooves.", cell=True), img("step09_arc.png", W / 2 - 0.4 * cm, "Fig. 6 — Arc fusion (illustration).", cell=True)],
+              [img("step11_sleeve_move.png", W / 2 - 0.4 * cm, "Fig. 7 — Sleeve moved over the joint.", cell=True), img("step13_tray.png", W / 2 - 0.4 * cm, "Fig. 8 — Splice tray.", cell=True)]],
              colWidths=[W / 2, W / 2])
 grid.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP")]))
 S += [grid]
-S += [P("Procedure — mechanical splicing", "h2"),
-      bullets(["<b>Strip</b> the coating to the length given by the splice maker.", "<b>Clean</b> the bare glass with alcohol.", "<b>Cleave</b> to a flat, square end.",
-               "<b>Insert</b> the first fiber into the splice up to the centre.", "<b>Align</b> — insert the second fiber until the ends meet (a slight bow shows contact).",
-               "<b>Lock</b> the cam or lid to clamp both fibers.", "<b>Test</b> the joint with an OTDR or power meter."], numbered=True),
-      img("mech_splice.png", W * 0.75, "Fig. 10 — Mechanical splice, cut-away view (illustration).")]
 S += [P("Observation", "h2"),
       P("No measured splice-loss value was recorded during our session, so no splice loss is reported here. The table below is left for recording values when the test is done."),
       table([["Splice no.", "Fiber type", "Splicer estimated loss (dB)", "Measured loss (dB) and method", "Remarks"], ["1", "", "", "", ""], ["2", "", "", "", ""]],
             [2 * cm, 2.8 * cm, 3.6 * cm, 4.4 * cm, W - 12.8 * cm]),
       P("The splicer's value is only an estimate from the camera image. The real loss must be measured with an OTDR or a light source and power meter.", "small")]
-S += [P("Result", "h2"), P("The complete fusion splicing procedure (preparation, stripping, cleaning, cleaving, alignment, arc fusion, protection and testing) and the mechanical "
-                          "splicing method were studied. A splice-loss value is not stated because it was not measured in this session.")]
+S += [P("Result", "h2"), P("The complete fusion splicing procedure (preparation, stripping, cleaning, cleaving, alignment, arc fusion, protection and testing) was "
+                          "studied. A splice-loss value is not stated because it was not measured in this session.")]
 S += [P("Precautions", "h2"),
       bullets(["Always slide the protection sleeve onto the fiber before splicing.", "Clean the bare fiber just before cleaving; never touch it after cleaning.",
                "Keep the cleaver blade and the splicer V-grooves and electrodes clean.", "Do not bend the fiber sharply; use large loops in the splice tray.",
                "Fiber offcuts are sharp glass needles: wear safety glasses and put them in a sealed scrap bin.",
                "Do not eat or drink at the splicing bench.", "Let the heat-shrink sleeve cool before handling."])]
-S.append(PageBreak())
+S.append(CondPageBreak(9 * cm))
 
 # ---------------- EXPERIMENT 2 ----------------
 S += [P("EXPERIMENT 2", "kicker"), P("Optical Fiber Testing Using OTDR", "h1")]
@@ -216,10 +209,10 @@ S += [P("Theory", "h2"),
       P("d = (c × t) / (2n)", "eq"),
       P("where <i>c</i> is the speed of light in vacuum, <i>n</i> is the group index of the fiber (about 1.47), and the factor 2 is because the light travels out and back. "
         "The result is drawn as a trace: distance (km) on the X-axis and returned signal level (dB) on the Y-axis."),
-      img("otdr_principle_bg.png", W, "Fig. 11 — Working principle of an OTDR (simplified diagram)."),
+      img("otdr_principle_bg.png", W, "Fig. 9 — Working principle of an OTDR (simplified diagram)."),
       P("Right after the OTDR port, the strong front reflection blinds the detector for a short distance (the <i>dead zone</i>). A <b>launch cable</b> moves the first connector out "
         "of this zone; a <b>receive cable</b> lets the far-end connector be measured."),
-      img("otdr_connection.png", W, "Fig. 12 — Connection: OTDR → launch cable → fiber under test → receive cable (optional).")]
+      img("otdr_connection.png", W, "Fig. 10 — Connection: OTDR → launch cable → fiber under test → receive cable (optional).")]
 S += [P("Procedure", "h2"),
       bullets(["Switch on the OTDR.", "Inspect and clean all fiber connectors.", "Connect the launch cable (if available) and then the fiber under test. Check all connections are secure.",
                "Make sure the fiber is not carrying a live signal.", "Open the <b>Test Setting</b> menu. Select wavelength, range, pulse width, test time, resolution and power mode (values below).",
@@ -261,14 +254,14 @@ S += [P("Apparatus required", "h2"), bullets(["FiberShot Pro Series OTDR", "Fibe
 S += [P("Theory", "h2"),
       P("<b>Link loss</b> is the total reduction in optical signal power as light travels through a fiber link. It is given in dB and includes fiber loss, splice loss and connector loss. "
         "<b>Fiber attenuation</b> is the loss of the fiber itself per unit length, in dB/km."),
-      img("link_loss_bg.png", W, "Fig. 13 — Losses along a link: slope = fiber attenuation, steps = event losses (sketch)."),
+      img("link_loss_bg.png", W, "Fig. 11 — Losses along a link: slope = fiber attenuation, steps = event losses (sketch)."),
       P("For an end-to-end test with a light source and an optical power meter (insertion-loss test):"),
       P("Link Loss (dB) = P<sub>in</sub> (dBm) − P<sub>out</sub> (dBm)", "eq"),
       P("where P<sub>in</sub> is the power launched into the link and P<sub>out</sub> is the power received at the far end (dBm = power relative to 1 mW). "
         "An OTDR does not measure power at both ends. It <b>estimates</b> loss from the backscattered light, and the link or section loss is read from its event table or "
         "with the A–B loss-measurement cursors. The average attenuation is then:"),
       P("Average Attenuation (dB/km) = Total Loss (dB) / Fiber Length (km)", "eq"),
-      img("trace_cursors.png", W * 0.7, "Fig. 14 — Example trace with A–B cursors (educational example, not our trace).")]
+      img("trace_cursors.png", W * 0.7, "Fig. 12 — Example trace with A–B cursors (educational example, not our trace).")]
 S += [P("Procedure", "h2"),
       bullets(["Clean and inspect the fiber connectors.", "Connect the OTDR to the fiber link.", "Use suitable launch and receive cables when required.", "Open the test settings.",
                "Select wavelength, range and pulse width.", "Start the averaged OTDR measurement (AVG).", "Observe the trace.", "Identify the start and end of the link.",
@@ -298,7 +291,7 @@ S += [P("Overall conclusion", "h2"),
 S += [P("References", "h2"),
       bullets(["G. Keiser, <i>Optical Fiber Communications</i>, 5th ed., McGraw-Hill Education.",
                "J. M. Senior, <i>Optical Fiber Communications: Principles and Practice</i>, 3rd ed., Pearson Education, 2009.",
-               "The Fiber Optic Association (FOA), Online Reference Guide — fusion splicing, mechanical splicing and OTDR testing. https://www.thefoa.org/tech/ref/",
+               "The Fiber Optic Association (FOA), Online Reference Guide — fusion splicing and OTDR testing. https://www.thefoa.org/tech/ref/",
                "ITU-T Recommendation G.652 — Characteristics of a single-mode optical fibre and cable.",
                "IEC 61746-1 — Calibration of optical time-domain reflectometers (OTDR), Part 1: single-mode fibres.",
                "ANSI/TIA-568.3-D — Optical Fiber Cabling and Components Standard.",

@@ -145,29 +145,6 @@ D.splice_before_after = () => {
   return svg(W, H, s);
 };
 
-// ---------- Fusion vs mechanical mini sketches ----------
-D.splice_types = () => {
-  const W = 1400, H = 330;
-  let s = "";
-  // fusion
-  s += text(40, 40, "Fusion splice", { size: 26, weight: 700, color: NAVY });
-  s += fiberH(40, 316, 170, { glass: 16, core: 5 }) + fiberH(324, 600, 170, { glass: 16, core: 5 });
-  s += `<path d="M320,70 L320,120" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><path d="M320,220 L320,270" stroke="${INK}" stroke-width="10" stroke-linecap="round"/>`;
-  s += `<path d="M320,125 L312,140 L326,152 L314,165 L328,178 L316,192 L324,215" stroke="${ORANGE}" stroke-width="4" fill="none"/>`;
-  s += text(340, 95, "electrode", { size: 20, color: GREY }) + text(340, 285, "electrode", { size: 20, color: GREY });
-  s += text(40, 315, "An electric arc melts the glass ends together.", { size: 21, color: INK });
-  // mechanical
-  const ox = 760;
-  s += text(ox, 40, "Mechanical splice", { size: 26, weight: 700, color: NAVY });
-  s += rect(ox + 120, 120, 360, 100, { fill: "#E9E6DF", stroke: INK, sw: 2, r: 10 });
-  s += rect(ox + 255, 150, 90, 40, { fill: "#F7E0C8", stroke: ORANGE, sw: 1.5, r: 8 });
-  s += fiberH(ox, ox + 298, 170, { glass: 16, core: 5 }) + fiberH(ox + 302, ox + 620, 170, { glass: 16, core: 5 });
-  s += line(ox + 300, 150, ox + 300, 95, ORANGE, 1.5) + text(ox + 300, 88, "index-matching gel", { size: 20, color: ORANGE, anchor: "middle" });
-  s += text(ox + 300, 250, "housing holds the fibers in line", { size: 20, color: GREY, anchor: "middle" });
-  s += text(ox, 315, "Fiber ends are pushed together and clamped.", { size: 21, color: INK });
-  return svg(W, H, s);
-};
-
 // ---------- Tool illustrations ----------
 const toolBox = (body, label) => svg(500, 340, body + text(250, 330, label, { size: 22, color: GREY, anchor: "middle", italic: true }));
 D.tool_splicer = () => {
@@ -411,23 +388,6 @@ D.step14_test = () => {
   s += text(230, 280, "example trace: small step at the splice", { size: 19, color: GREY, italic: true });
   s += text(30, 420, "Check the finished link with an OTDR (or light source", { size: 23 }) + text(30, 450, "+ power meter). Record the real measured loss.", { size: 23 });
   return svg(SW, SH, s);
-};
-
-// ---------- Mechanical splice ----------
-D.mech_splice = () => {
-  const W = 1000, H = 520; let s = "";
-  s += rect(140, 140, 720, 180, { fill: "#E9E6DF", stroke: INK, sw: 2.5, r: 16 });
-  s += rect(160, 90, 300, 50, { fill: ORANGE, stroke: INK, sw: 2, r: 8 }) + text(310, 123, "locking cam / lid", { size: 22, color: WHITE, anchor: "middle", weight: 700 });
-  s += rect(540, 90, 300, 50, { fill: ORANGE, stroke: INK, sw: 2, r: 8 }) + text(690, 123, "locking cam / lid", { size: 22, color: WHITE, anchor: "middle", weight: 700 });
-  s += `<path d="M200,262 L800,262 L500,262 Z" stroke="${GREY}" stroke-width="2"/>`;
-  s += rect(445, 205, 110, 50, { fill: "#F7E0C8", stroke: ORANGE, sw: 1.5, r: 10 });
-  s += fiberH(20, 497, 230, { coatTo: 250, glass: 16, coat: 32, core: 5 }) + fiberH(503, 980, 230, { coatFrom: 750, glass: 16, coat: 32, core: 5 });
-  s += line(500, 255, 500, 380, ORANGE, 1.5) + text(500, 405, "index-matching gel fills the tiny gap", { size: 23, color: ORANGE, anchor: "middle" });
-  s += line(330, 262, 330, 350, GREY, 1.5) + text(270, 370, "alignment V-groove", { size: 22, color: GREY, anchor: "middle" });
-  s += arrow(60, 180, 150, 180, NAVY, 3) + arrow(940, 180, 850, 180, NAVY, 3);
-  s += text(60, 165, "insert", { size: 22, color: NAVY }) + text(940, 165, "insert", { size: 22, color: NAVY, anchor: "end" });
-  s += text(500, 480, "Mechanical splice — cut-away view (illustration)", { size: 21, color: GREY, anchor: "middle", italic: true });
-  return svg(W, H, s);
 };
 
 // ---------- Mistake icons (300 x 180) ----------
