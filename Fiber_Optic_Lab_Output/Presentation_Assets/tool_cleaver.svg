@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="312" viewBox="0 0 500 312">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<rect x="90" y="150" width="320" height="120" rx="10" fill="#C7CDD6" stroke="#2B2B2B" stroke-width="2" /><path d="M110,150 L130,80 L370,80 L390,150 Z" fill="#E4E7EC" stroke="#2B2B2B" stroke-width="2"/><line x1="40" y1="200" x2="460" y2="200" stroke="#6E7A88" stroke-width="6" /><line x1="250" y1="200" x2="460" y2="200" stroke="#7FA5AB" stroke-width="3" /><rect x="140" y="185" width="70" height="30" rx="4" fill="#5B6576" stroke="#2B2B2B" stroke-width="1.5" /><text x="175" y="240" font-family="Carlito, Calibri, Arial, sans-serif" font-size="15" fill="#2B2B2B" font-weight="400" text-anchor="middle" >fiber holder</text><circle cx="300" cy="225" r="18" fill="#8C96A6" stroke="#2B2B2B" stroke-width="1.5"/><text x="300" y="262" font-family="Carlito, Calibri, Arial, sans-serif" font-size="15" fill="#2B2B2B" font-weight="400" text-anchor="middle" >blade wheel</text><rect x="420" y="160" width="60" height="80" rx="6" fill="#E9E6DF" stroke="#2B2B2B" stroke-width="1.5" /><text x="450" y="150" font-family="Carlito, Calibri, Arial, sans-serif" font-size="15" fill="#2B2B2B" font-weight="400" text-anchor="middle" >scrap bin</text><text x="250" y="330" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#7D838C" font-weight="400" text-anchor="middle" font-style="italic">Precision cleaver (illustration)</text>
+</svg>

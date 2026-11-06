@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="410" viewBox="0 0 800 410">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<rect x="20" y="20" width="760" height="380" rx="12" fill="#101822" stroke="#56637A" stroke-width="3" /><rect x="40" y="170" width="720" height="60" rx="0" fill="#4E6A78" stroke="none" stroke-width="0" /><rect x="40" y="194" width="720" height="12" rx="0" fill="#C6E3E8" stroke="none" stroke-width="0" /><rect x="470" y="50" width="280" height="90" rx="6" fill="#1C2A3A" stroke="#56637A" stroke-width="1.5" /><text x="490" y="85" font-family="Carlito, Calibri, Arial, sans-serif" font-size="24" fill="#FFFFFF" font-weight="400" text-anchor="start" >Est. loss:  _ . _ _  dB</text><text x="490" y="120" font-family="Carlito, Calibri, Arial, sans-serif" font-size="18" fill="#9AA6B6" font-weight="400" text-anchor="start" >(splicer estimate)</text><text x="60" y="290" font-family="Carlito, Calibri, Arial, sans-serif" font-size="21" fill="#E8A06A" font-weight="400" text-anchor="start" >Look for: bubbles, thin neck, fat joint, offset cores</text><text x="60" y="320" font-family="Carlito, Calibri, Arial, sans-serif" font-size="21" fill="#C9D2DC" font-weight="400" text-anchor="start" >If the joint looks bad → break it and splice again</text><text x="400" y="445" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#7D838C" font-weight="400" text-anchor="middle" font-style="italic">Inspection screen (illustration — value left blank)</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="290" viewBox="0 0 520 290">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<line x1="40" y1="20" x2="40" y2="250" stroke="#2B2B2B" stroke-width="2" /><line x1="40" y1="250" x2="505" y2="250" stroke="#2B2B2B" stroke-width="2" /><text x="272.5" y="282" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#7D838C" font-weight="400" text-anchor="middle" >distance →</text><text x="22" y="135" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#7D838C" text-anchor="middle" transform="rotate(-90 22 135)">dB</text><polyline points="40.0,50.7 412.0,69.1 412.9,31.5 416.6,204.0 416.6,211.9 421.1,210.3 425.5,220.5 429.9,217.6 434.3,213.0 438.7,211.5 443.2,221.4 447.6,203.0 452.0,209.6 456.4,213.7 460.8,216.6 465.2,205.2 469.7,208.0 474.1,221.4 478.5,211.7 482.9,217.8 487.3,207.7 491.7,219.5 496.2,210.3 500.6,212.0 505.0,219.1" fill="none" stroke="#1F3352" stroke-width="3" stroke-linejoin="round"/><text x="86.5" y="112" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#C8642B" font-weight="400" text-anchor="start" >reflection at the expected</text><text x="86.5" y="136" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#C8642B" font-weight="400" text-anchor="start" >length, then noise</text>
+</svg>

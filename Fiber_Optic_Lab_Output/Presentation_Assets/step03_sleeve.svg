@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="362" viewBox="0 0 800 362">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<rect x="30" y="193" width="740" height="14" rx="0" fill="#D6E8EA" stroke="#7FA5AB" stroke-width="1.2" /><rect x="30" y="198" width="740" height="4" rx="0" fill="#F4C7A5" stroke="none" stroke-width="0" /><rect x="140" y="170" width="220" height="60" rx="28" fill="#E7EEF2" stroke="#2B2B2B" stroke-width="2" /><rect x="155" y="186" width="190" height="5" rx="0" fill="#8C96A6" stroke="none" stroke-width="0" /><line x1="380" y1="130" x2="180" y2="130" stroke="#C8642B" stroke-width="3"  marker-end="url(#arORANGE)" /><text x="280" y="115" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#C8642B" font-weight="400" text-anchor="middle" >slide it well away from the end</text><text x="250" y="275" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#2B2B2B" font-weight="400" text-anchor="middle" >protection sleeve</text><text x="30" y="390" font-family="Carlito, Calibri, Arial, sans-serif" font-size="23" fill="#2B2B2B" font-weight="400" text-anchor="start" >Put the sleeve on ONE fiber now. Once the fibers are</text><text x="30" y="420" font-family="Carlito, Calibri, Arial, sans-serif" font-size="23" fill="#1F3352" font-weight="700" text-anchor="start" >joined, there is no way to add it.</text>
+</svg>

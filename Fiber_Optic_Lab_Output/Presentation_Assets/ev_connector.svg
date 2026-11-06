@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="290" viewBox="0 0 520 290">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<line x1="40" y1="20" x2="40" y2="250" stroke="#2B2B2B" stroke-width="2" /><line x1="40" y1="250" x2="505" y2="250" stroke="#2B2B2B" stroke-width="2" /><text x="272.5" y="282" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#7D838C" font-weight="400" text-anchor="middle" >distance →</text><text x="22" y="135" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#7D838C" text-anchor="middle" transform="rotate(-90 22 135)">dB</text><polyline points="40.0,50.7 272.5,62.2 273.4,27.7 279.5,69.1 505.0,80.6" fill="none" stroke="#1F3352" stroke-width="3" stroke-linejoin="round"/><text x="291.1" y="31.50000000000001" font-family="Carlito, Calibri, Arial, sans-serif" font-size="20" fill="#C8642B" font-weight="400" text-anchor="start" >spike + drop</text>
+</svg>

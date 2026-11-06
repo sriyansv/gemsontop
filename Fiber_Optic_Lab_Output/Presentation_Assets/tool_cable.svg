@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="312" viewBox="0 0 500 312">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<path d="M40,250 C120,240 140,150 240,140" stroke="#3D4A5C" stroke-width="44" fill="none" stroke-linecap="butt"/><path d="M240,140 L300,135" stroke="#E2C35A" stroke-width="30" fill="none"/><path d="M300,135 L380,132" stroke="#E7E3D8" stroke-width="16" fill="none"/><path d="M380,132 L470,130" stroke="#7FA5AB" stroke-width="4" fill="none"/><text x="130" y="300" font-family="Carlito, Calibri, Arial, sans-serif" font-size="17" fill="#2B2B2B" font-weight="400" text-anchor="middle" >jacket</text><text x="270" y="100" font-family="Carlito, Calibri, Arial, sans-serif" font-size="17" fill="#2B2B2B" font-weight="400" text-anchor="middle" >aramid</text><text x="340" y="175" font-family="Carlito, Calibri, Arial, sans-serif" font-size="17" fill="#2B2B2B" font-weight="400" text-anchor="middle" >buffer</text><text x="440" y="110" font-family="Carlito, Calibri, Arial, sans-serif" font-size="17" fill="#2B2B2B" font-weight="400" text-anchor="middle" >fiber</text><text x="250" y="330" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#7D838C" font-weight="400" text-anchor="middle" font-style="italic">Optical fiber cable (illustration)</text>
+</svg>

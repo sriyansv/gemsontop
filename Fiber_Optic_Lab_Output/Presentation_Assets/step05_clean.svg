@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="362" viewBox="0 0 800 362">
+<defs>
+<marker id="arINK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B2B2B"/></marker>
+<marker id="arNAVY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F3352"/></marker>
+<marker id="arORANGE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C8642B"/></marker>
+<marker id="arTEAL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D7A"/></marker>
+<marker id="arGREY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7D838C"/></marker>
+<marker id="arWHITE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFFFFF"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#C9C6BF" stroke-width="3"/></pattern>
+</defs>
+
+<rect x="30" y="195" width="270" height="30" rx="0" fill="#A9B4C0" stroke="#6E7A88" stroke-width="1.5" /><rect x="300" y="203" width="460" height="14" rx="0" fill="#D6E8EA" stroke="#7FA5AB" stroke-width="1.2" /><rect x="30" y="208" width="730" height="4" rx="0" fill="#F4C7A5" stroke="none" stroke-width="0" /><path d="M420,150 C460,140 520,140 560,150 L560,270 C520,280 460,280 420,270 Z" fill="#FFFFFF" stroke="#2B2B2B" stroke-width="2"/><text x="490" y="300" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#2B2B2B" font-weight="400" text-anchor="middle" >wipe + IPA</text><line x1="470" y1="110" x2="740" y2="110" stroke="#2E7D7A" stroke-width="3"  marker-end="url(#arTEAL)" /><text x="605" y="95" font-family="Carlito, Calibri, Arial, sans-serif" font-size="22" fill="#2E7D7A" font-weight="400" text-anchor="middle" >wipe once, toward the tip</text><text x="30" y="390" font-family="Carlito, Calibri, Arial, sans-serif" font-size="23" fill="#2B2B2B" font-weight="400" text-anchor="start" >Wipe the bare glass with a lint-free wipe and 99% isopropyl</text><text x="30" y="420" font-family="Carlito, Calibri, Arial, sans-serif" font-size="23" fill="#2B2B2B" font-weight="400" text-anchor="start" >alcohol. Do not touch the glass again after cleaning.</text>
+</svg>
