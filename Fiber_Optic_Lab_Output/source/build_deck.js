@@ -179,12 +179,11 @@ async function findPhoto(base) {
     10: ["Inspect the splice", "Check the joint on screen. The loss shown is only an estimate."],
     11: ["Move the sleeve", "Slide the sleeve so the joint sits in its centre."],
     12: ["Heat-shrink", "Shrink the sleeve in the heater. Let it cool before handling."],
-    13: ["Splice tray", "Fix the sleeve in the tray; coil spare fiber in large loops."],
-    14: ["Test the joint", "Measure the real loss with an OTDR or a power meter."],
+    13: ["Test the joint", "Measure the real loss with an OTDR or a power meter."],
   };
-  const stepImg = { 1: "step01_prepare", 2: "step02_jacket", 3: "step03_sleeve", 4: "step04_strip", 5: "step05_clean", 6: "step06_cleave", 7: "step07_place", 8: "step08_align", 9: "step09_arc", 10: "step10_inspect", 11: "step11_sleeve_move", 12: "step12_heat", 13: "step13_tray", 14: "step14_test" };
+  const stepImg = { 1: "step01_prepare", 2: "step02_jacket", 3: "step03_sleeve", 4: "step04_strip", 5: "step05_clean", 6: "step06_cleave", 7: "step07_place", 8: "step08_align", 9: "step09_arc", 10: "step10_inspect", 11: "step11_sleeve_move", 12: "step12_heat", 13: "step14_test" };
   const darkStep = n => n >= 8 && n <= 10;
-  const procSlide = (title, tagTxt, nums, noteTxt) => {
+  const procSlide = (title, tagTxt, nums, noteTxt, noteCols = 1) => {
     const sl = newSlide("Fusion Splicing", title, tagTxt);
     nums.forEach((n, i) => {
       const col = i % 4, row = Math.floor(i / 4);
@@ -194,37 +193,15 @@ async function findPhoto(base) {
       T(sl, steps[n][0], { x: x + 0.48, y: y + 1.55, w: 2.4, h: 0.38, fontSize: 14.5, bold: true, color: NAVY, valign: "middle" });
       T(sl, steps[n][1], { x, y: y + 2.0, w: 2.85, h: 0.65, fontSize: 12.5 });
     });
-    note(sl, noteTxt, 0.6 + 3 * 3.1, 1.35 + 2.75 + 0.1, 2.9, 2.4, false);
+    note(sl, noteTxt, 0.6 + (4 - noteCols) * 3.1, 1.35 + 2.75 + 0.1, 2.9 + (noteCols - 1) * 3.1, 2.4, false);
     return sl;
   };
   s = procSlide("Fusion Splicing Procedure (1/2)", "PART A  ·  FUSION SPLICING  ·  STEPS 1–7", [1, 2, 3, 4, 5, 6, 7],
     "Safety: bare-fiber offcuts are tiny glass needles. Pick them up with tape and put them in the scrap bin.");
   s.addNotes("Step 3 is the most commonly forgotten. The cleave quality decides the splice quality.");
-  s = procSlide("Fusion Splicing Procedure (2/2)", "PART A  ·  FUSION SPLICING  ·  STEPS 8–14", [8, 9, 10, 11, 12, 13, 14],
-    "The splicer's loss value is an estimate from its camera image. Record the measured loss from step 14. (Screen views are illustrations; we did not record a splice-loss value.)");
+  s = procSlide("Fusion Splicing Procedure (2/2)", "PART A  ·  FUSION SPLICING  ·  STEPS 8–13", [8, 9, 10, 11, 12, 13],
+    "The splicer's loss value is an estimate from its camera image. Record the measured loss from step 13. (Screen views are illustrations; we did not record a splice-loss value.)", 2);
   s.addNotes("Screens shown are drawings of a typical splicer display, not screenshots from our machine.");
-
-  // 12. PRECAUTIONS
-  s = newSlide("Fusion Splicing", "Splicing Precautions and Common Mistakes", "PART A  ·  FUSION SPLICING");
-  T(s, "PROBLEM", { x: 2.3, y: 1.3, w: 4, h: 0.3, fontSize: 11, bold: true, color: GREY, charSpacing: 2 });
-  T(s, "WHAT TO DO", { x: 7.65, y: 1.3, w: 4, h: 0.3, fontSize: 11, bold: true, color: TEAL, charSpacing: 2 });
-  const errs = [
-    ["err_dirt.png", "Dirty fiber ends", "Dust or skin oil burns in the arc and causes bubbles and high loss.", "Clean with 99% IPA just before cleaving. Do not touch bare glass."],
-    ["err_cleave.png", "Poor cleaving", "Angled, chipped or lipped ends do not fuse well.", "Keep the blade clean, rotate it when worn, and re-cleave any bad end."],
-    ["err_align.png", "Incorrect alignment", "If cores are offset, part of the light misses the next core.", "Seat fibers properly in the V-grooves; clean the grooves; let the splicer align."],
-    ["err_bend.png", "Sharp fiber bends", "Light leaks out at tight bends (worse at 1550 nm).", "Keep large loops in the tray and follow the bend-radius guides."],
-    ["err_shard.png", "Unsafe fiber fragments", "Glass slivers can enter skin and eyes.", "Wear safety glasses, use a scrap bin, don't eat or drink at the bench."],
-  ];
-  errs.forEach((e, i) => {
-    const y = 1.65 + i * 1.03;
-    img(s, e[0], 0.6, y + 0.05, 1.45, 0.82, e[1]);
-    T(s, e[1], { x: 2.3, y, w: 4.6, h: 0.35, fontSize: 15, bold: true, color: NAVY });
-    T(s, e[2], { x: 2.3, y: y + 0.36, w: 4.7, h: 0.55, fontSize: 13 });
-    s.addShape(pres.shapes.LINE, { x: 7.05, y: y + 0.45, w: 0.4, h: 0, line: { color: TEAL, width: 1.5, endArrowType: "triangle" } });
-    T(s, e[3], { x: 7.65, y: y + 0.1, w: 5.05, h: 0.75, fontSize: 13.5, valign: "middle" });
-    if (i < 4) rule(s, 0.6, y + 0.98, 12.1);
-  });
-  s.addNotes("These five problems cause most failed splices in student labs.");
 
   // =====================================================================
   // OTDR — WHAT & HOW (dark)
