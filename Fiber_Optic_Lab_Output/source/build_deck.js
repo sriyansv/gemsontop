@@ -118,14 +118,8 @@ async function findPhoto(base) {
   T(s, "B.TECH  ·  LABORATORY DEMONSTRATION", { x: 0.7, y: 0.65, w: 8, h: 0.3, fontSize: 12, bold: true, color: SOFTORANGE, charSpacing: 3 });
   T(s, "Fusion Splicing, OTDR Testing & Link Loss Measurement", { x: 0.7, y: 1.05, w: 10.5, h: 1.75, fontFace: HEAD, fontSize: 40, bold: true, color: WHITE, valign: "top" });
   T(s, "Optical Fiber Communication Laboratory", { x: 0.7, y: 2.85, w: 9, h: 0.45, fontFace: HEAD, fontSize: 20, italic: true, color: MUTED });
-  T(s, "Team", { x: 0.7, y: 4.05, w: 1.6, h: 0.32, fontSize: 13, color: MUTED });
-  T(s, "Neelesh  ·  Sriyans  ·  Abhilash", { x: 2.35, y: 4.0, w: 3.9, h: 0.4, fontSize: 17, bold: true, color: WHITE, objectName: "team" });
-  rule(s, 2.35, 4.39, 3.6, "4A566B");
-  ["Department", "College", "Faculty"].forEach((f, j) => { const i = j + 1;
-    T(s, f, { x: 0.7, y: 4.05 + i * 0.5, w: 1.6, h: 0.32, fontSize: 13, color: MUTED });
-    T(s, "Your " + f.toLowerCase() + " here", { x: 2.35, y: 4.05 + i * 0.5, w: 3.6, h: 0.32, fontSize: 14, color: PALE, italic: true, objectName: "field_" + i });
-    rule(s, 2.35, 4.05 + i * 0.5 + 0.34, 3.6, "4A566B");
-  });
+  T(s, "TEAM MEMBERS", { x: 0.7, y: 4.05, w: 4, h: 0.3, fontSize: 12, bold: true, color: SOFTORANGE, charSpacing: 2 });
+  ["Neelesh", "Sriyans", "Abhilash"].forEach((n, i) => T(s, n, { x: 0.7, y: 4.5 + i * 0.55, w: 4.5, h: 0.45, fontFace: HEAD, fontSize: 22, bold: true, color: WHITE, objectName: "member_" + i }));
   img(s, "title_cable.png", 6.35, 3.85, 6.5, 2.8, "Cut-away illustration of an optical fiber cable");
   T(s, [{ text: "A ", options: { bold: true, color: SOFTORANGE } }, { text: "Fusion splicing     " }, { text: "B ", options: { bold: true, color: SOFTORANGE } }, { text: "OTDR testing and loss measurement" }],
     { x: 0.7, y: 3.35, w: 9, h: 0.35, fontSize: 14, color: PALE });
