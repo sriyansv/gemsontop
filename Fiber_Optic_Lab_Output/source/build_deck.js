@@ -118,15 +118,18 @@ async function findPhoto(base) {
   T(s, "B.TECH  ·  LABORATORY DEMONSTRATION", { x: 0.7, y: 0.65, w: 8, h: 0.3, fontSize: 12, bold: true, color: SOFTORANGE, charSpacing: 3 });
   T(s, "Fusion Splicing, OTDR Testing & Link Loss Measurement", { x: 0.7, y: 1.05, w: 10.5, h: 1.75, fontFace: HEAD, fontSize: 40, bold: true, color: WHITE, valign: "top" });
   T(s, "Optical Fiber Communication Laboratory", { x: 0.7, y: 2.85, w: 9, h: 0.45, fontFace: HEAD, fontSize: 20, italic: true, color: MUTED });
-  ["Student name", "Roll number", "Department", "College", "Faculty"].forEach((f, i) => {
+  T(s, "Team", { x: 0.7, y: 4.05, w: 1.6, h: 0.32, fontSize: 13, color: MUTED });
+  T(s, "Neelesh  ·  Sriyans  ·  Abhilash", { x: 2.35, y: 4.0, w: 3.9, h: 0.4, fontSize: 17, bold: true, color: WHITE, objectName: "team" });
+  rule(s, 2.35, 4.39, 3.6, "4A566B");
+  ["Department", "College", "Faculty"].forEach((f, j) => { const i = j + 1;
     T(s, f, { x: 0.7, y: 4.05 + i * 0.5, w: 1.6, h: 0.32, fontSize: 13, color: MUTED });
     T(s, "Your " + f.toLowerCase() + " here", { x: 2.35, y: 4.05 + i * 0.5, w: 3.6, h: 0.32, fontSize: 14, color: PALE, italic: true, objectName: "field_" + i });
     rule(s, 2.35, 4.05 + i * 0.5 + 0.34, 3.6, "4A566B");
   });
   img(s, "title_cable.png", 6.35, 3.85, 6.5, 2.8, "Cut-away illustration of an optical fiber cable");
-  T(s, [{ text: "A ", options: { bold: true, color: SOFTORANGE } }, { text: "Fusion splicing     " }, { text: "B ", options: { bold: true, color: SOFTORANGE } }, { text: "OTDR testing     " }, { text: "C ", options: { bold: true, color: SOFTORANGE } }, { text: "Link loss" }],
+  T(s, [{ text: "A ", options: { bold: true, color: SOFTORANGE } }, { text: "Fusion splicing     " }, { text: "B ", options: { bold: true, color: SOFTORANGE } }, { text: "OTDR testing and loss measurement" }],
     { x: 0.7, y: 3.35, w: 9, h: 0.35, fontSize: 14, color: PALE });
-  s.addNotes("Three parts: join the fiber (A), test it with an OTDR (B), and work out the link loss (C).");
+  s.addNotes("Presented by Neelesh, Sriyans and Abhilash. Two parts: join the fiber (A), then test it and measure its loss with an OTDR (B).");
 
   // 2. BASICS
   s = newSlide("Fusion Splicing", "Optical Fiber and Fusion Splicing", "PART A  ·  FUSION SPLICING");
@@ -246,6 +249,40 @@ async function findPhoto(base) {
   T(s, "Short pulse + long averaging = a clear, detailed trace for a short (few-km) fiber like ours.", { x: 0.6, y: 6.3, w: 7.5, h: 0.4, fontSize: 13, italic: true, color: TEAL });
   s.addNotes("The settings allowed 1310 and 1550 nm. The result screen we photographed shows the 1310 nm measurement.");
 
+  const sideList = (sl, x, y, w, items, fs = 13) => { let yy = y; items.forEach(it => {
+    T(sl, it[0], { x, y: yy, w, h: 0.32, fontSize: 14.5, bold: true, color: it[3] || NAVY });
+    T(sl, it[1], { x, y: yy + 0.33, w, h: it[2] - 0.38, fontSize: fs });
+    yy += it[2];
+  }); };
+
+  // ADV 1. PULSE WIDTH, RESOLUTION, AVERAGING
+  s = newSlide("OTDR Testing", "Pulse Width, Resolution and Averaging", "PART B  ·  OTDR TESTING  ·  GOING DEEPER");
+  img(s, "pulse_compare.png", 0.45, 1.35, 7.2, 3.38, "Short and long pulse traces compared (example)");
+  note(s, "Our settings: 50 ns pulse, 10 km range, 50 s averaging → about 5 m resolution and a clean trace for our 4.8 km fiber.", 0.6, 5.0, 6.95, 0.95, false, INK);
+  T(s, [{ text: "Resolution ≈ c·τ / 2n", options: { bold: true } }, { text: "   (τ = pulse width)" }], { x: 0.6, y: 6.1, w: 6.95, h: 0.4, fontFace: HEAD, fontSize: 16, color: NAVY });
+  T(s, "50 ns: 3×10⁸ × 50×10⁻⁹ / (2 × 1.468) ≈ 5.1 m", { x: 0.6, y: 6.5, w: 6.95, h: 0.32, fontSize: 12.5, color: GREY });
+  vrule(s, 7.95, 1.4, 5.4);
+  sideList(s, 8.3, 1.35, 4.45, [
+    ["Short pulse", "Fine detail: close events are seen separately, short dead zones. But less light goes in, so the far end is noisy.", 1.25],
+    ["Long pulse", "More energy, so it reaches much farther (more dynamic range), but close events merge into one.", 1.2],
+    ["Averaging (test time)", "Noise falls with √N: four times more averages roughly halves the noise. Longer test time = smoother trace.", 1.25],
+    ["Range", "Must be longer than the fiber, or echoes from one pulse overlap the next and false events appear.", 1.2],
+  ], 12.5);
+  s.addNotes("Pulse width trade-off: resolution versus range. Our 50 ns pulse was short enough for good detail on a 4.8 km link.");
+
+  // ADV 2. DEAD ZONES & DYNAMIC RANGE
+  s = newSlide("OTDR Testing", "Dead Zones and Dynamic Range", "PART B  ·  OTDR TESTING  ·  GOING DEEPER");
+  img(s, "dead_zones.png", 0.45, 1.35, 7.4, 3.85, "Trace showing dead zones and dynamic range (example)");
+  note(s, "In our test the launch cable was set to 'None', so the OTDR's own front connector sat inside the front-end dead zone and its loss could not be measured.", 0.6, 5.45, 7.1, 1.05, false, INK);
+  vrule(s, 7.95, 1.4, 5.4);
+  sideList(s, 8.3, 1.35, 4.45, [
+    ["Event dead zone (EDZ)", "Shortest distance after a reflection at which a second reflective event can be seen as separate.", 1.3],
+    ["Attenuation dead zone (ADZ)", "Distance after a reflection before the loss of a next event can be measured. Always longer than the EDZ.", 1.35],
+    ["Dynamic range", "dB gap between the backscatter level at the start and the noise floor. It decides the largest link loss the OTDR can measure — keep a few dB of margin.", 1.6],
+    ["How to beat dead zones", "Use a launch cable, shorter pulses and clean connectors.", 1.0],
+  ], 12.5);
+  s.addNotes("Dead zones grow with pulse width and with strong reflections from dirty connectors.");
+
   // 19. UNDERSTANDING THE GRAPH
   s = newSlide("OTDR Testing", "Understanding the OTDR Graph", "PART B  ·  OTDR TESTING");
   photoSlot(s, "result", 0.6, 1.4, 6.6, 5.1, "Photo 2 — our OTDR trace (1310 nm)");
@@ -266,6 +303,23 @@ async function findPhoto(base) {
   T(s, "We only mark events that the OTDR actually shows on our screen and event table. We do not guess faults that are not on the trace.", { x: 7.6, y: 6.25, w: 5.1, h: 0.6, fontSize: 11.5, italic: true, color: GREY });
   s.addNotes("Point to each part of the trace on the photo while explaining.");
 
+
+  // ADV 3. REFLECTANCE, ORL, GHOSTS
+  s = newSlide("OTDR Testing", "Reflectance, ORL and Ghost Events", "PART B  ·  OTDR TESTING  ·  GOING DEEPER");
+  img(s, "ghost.png", 0.45, 1.35, 7.2, 3.38, "Ghost reflection example");
+  T(s, "In our trace", { x: 0.6, y: 4.95, w: 7, h: 0.32, fontSize: 14.5, bold: true, color: TEAL });
+  T(s, [
+    { text: "The event table shows one fiber section: start at 0.000 km, length 4.822 km, loss 1.550 dB — no splice or bend was flagged in between.", options: { bullet: true, breakLine: true } },
+    { text: "A large spike at about 4.8 km is the reflection from the far end of the fiber.", options: { bullet: true } },
+  ], { x: 0.6, y: 5.3, w: 7.0, h: 1.5, fontSize: 12.5, paraSpaceAfter: 4 });
+  vrule(s, 7.95, 1.4, 5.4);
+  sideList(s, 8.3, 1.35, 4.45, [
+    ["Reflectance (one event)", "How much light a single connector or end reflects, in negative dB. Typical: open cleaved end ≈ −14 dB, good UPC connector −50 dB or lower, APC −60 dB or lower.", 1.6],
+    ["ORL (whole link)", "Launched power ÷ total reflected power, in dB. Higher is better. Ours: 29.37 dB, most likely set by the strong far-end reflection.", 1.4],
+    ["Ghost events", "False echoes of a strong reflection, at 2× its distance. No loss across them and they often sit in the noise. Fix: clean or terminate connectors, change the range.", 1.65],
+  ], 12.5);
+  s.addNotes("Reflective events matter for laser transmitters and high-speed links, which is why ORL and reflectance are tested.");
+
   // 20. OUR OBSERVATIONS
   s = newSlide("OTDR Testing", "Our OTDR Observations", "PART B  ·  OTDR TESTING");
   const obs = [
@@ -284,50 +338,20 @@ async function findPhoto(base) {
   photoSlot(s, "result", 7.0, 1.4, 5.7, 5.4, "Photo 2 — result screen");
   s.addNotes("ORL is the ratio of light sent in to light reflected back, in dB. A higher ORL means less reflection.");
 
-  // =====================================================================
-  // LINK LOSS — MEANING, FORMULAS, METHOD
-  pres.addSection({ title: "Link Loss" });
-  s = newSlide("Link Loss", "Link Loss: Meaning and Formulas", "PART C  ·  LINK LOSS");
-  T(s, "Link loss is the total drop in optical power as light travels through a fiber link (fiber + splices + connectors). Fiber attenuation is the loss per km.", { x: 0.6, y: 1.3, w: 7.3, h: 0.85, fontSize: 14.5, italic: true, color: INK });
-  const eq = (y, runs, used) => {
-    s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y, w: 7.3, h: 1.15, fill: { color: WHITE }, line: { color: "D9D6CF", width: 1 } });
-    T(s, runs, { x: 0.8, y: y + 0.08, w: 7.0, h: 0.65, fontFace: HEAD, fontSize: 20, color: NAVY, valign: "middle" });
-    T(s, used, { x: 0.8, y: y + 0.75, w: 7.0, h: 0.32, fontSize: 11.5, color: GREY, italic: true });
-  };
-  eq(2.3, [{ text: "Link Loss (dB) = P" }, { text: "in", options: { subscript: true } }, { text: " (dBm) − P" }, { text: "out", options: { subscript: true } }, { text: " (dBm)" }], "End-to-end insertion loss — measured with a light source and an optical power meter.");
-  eq(3.6, [{ text: "Attenuation (dB/km) = " }, { text: "Total Loss (dB) / Length (km)", options: { bold: true } }], "Average loss for every kilometre of the link.");
-  note(s, "An OTDR does not use the first formula. It estimates loss from backscattered light and gives the section loss (dB) in its event table or between the A–B cursors.", 0.6, 5.0, 7.3, 1.0, false);
-  img(s, "trace_cursors.png", 8.25, 1.3, 4.5, 2.34, "Example trace with A and B cursors");
-  T(s, "With the OTDR", { x: 8.25, y: 3.85, w: 4.5, h: 0.35, fontSize: 15, bold: true, color: NAVY });
-  const ol = ["Run the averaged (AVG) test.", "Put cursor A at the start and B at the end of the link.", "Read the A–B loss in dB and the length in km.", "Divide loss by length for dB/km."];
-  T(s, ol.map((t, i) => ({ text: t, options: { bullet: { type: "number" }, breakLine: i < ol.length - 1 } })), { x: 8.25, y: 4.25, w: 4.5, h: 1.8, fontSize: 13, paraSpaceAfter: 4 });
-  T(s, "Trace above is an example, not our measurement.", { x: 8.25, y: 6.15, w: 4.5, h: 0.3, fontSize: 11, italic: true, color: GREY });
-  s.addNotes("dBm is power relative to 1 mW; dBm − dBm gives a loss in dB.");
 
-  // 25. CALCULATION
-  s = newSlide("Link Loss", "Calculation Using Our Readings", "PART C  ·  LINK LOSS");
-  T(s, "GIVEN  (measured)", { x: 0.6, y: 1.4, w: 3.5, h: 0.3, fontSize: 11, bold: true, color: TEAL, charSpacing: 2 });
-  T(s, [{ text: "Fiber length, L = ", options: {} }, { text: "4.822 km", options: { bold: true, breakLine: true } }, { text: "Total loss = " }, { text: "1.550 dB", options: { bold: true } }], { x: 0.6, y: 1.75, w: 3.6, h: 0.9, fontSize: 16, paraSpaceAfter: 6 });
-  T(s, "CALCULATION", { x: 0.6, y: 2.95, w: 3.5, h: 0.3, fontSize: 11, bold: true, color: ORANGE, charSpacing: 2 });
-  T(s, [
-    { text: "Average attenuation = Total loss / L", options: { breakLine: true } },
-    { text: "= 1.550 dB / 4.822 km", options: { breakLine: true } },
-    { text: "≈ 0.3214 dB/km", options: { bold: true, color: ORANGE } },
-  ], { x: 0.6, y: 3.3, w: 4.2, h: 1.6, fontSize: 18, fontFace: HEAD, paraSpaceAfter: 8 });
-  // comparison callouts
-  vrule(s, 5.05, 1.45, 5.2);
-  T(s, "0.3214", { x: 5.45, y: 1.35, w: 3.2, h: 0.9, fontFace: HEAD, fontSize: 48, bold: true, color: ORANGE });
-  T(s, "dB/km  ·  calculated by us\n(total loss ÷ length)", { x: 5.45, y: 2.25, w: 3.2, h: 0.65, fontSize: 13, color: GREY });
-  T(s, "0.317", { x: 9.2, y: 1.35, w: 3.2, h: 0.9, fontFace: HEAD, fontSize: 48, bold: true, color: TEAL });
-  T(s, "dB/km  ·  attenuation slope\nshown by the OTDR (measured)", { x: 9.2, y: 2.25, w: 3.5, h: 0.65, fontSize: 13, color: GREY });
-  T(s, "Why are they slightly different?", { x: 5.45, y: 3.25, w: 7.2, h: 0.4, fontSize: 16, bold: true, color: NAVY });
-  T(s, [
-    { text: "The OTDR's slope is a straight-line fit over a smooth part of the trace. It leaves out events such as splices and connectors.", options: { bullet: true, breakLine: true } },
-    { text: "Total loss covers the whole section, so any event loss inside it is included.", options: { bullet: true, breakLine: true } },
-    { text: "So 0.317 is NOT simply 1.550 ÷ 4.822 — the two numbers come from different methods.", options: { bullet: true } },
-  ], { x: 5.45, y: 3.7, w: 7.25, h: 1.9, fontSize: 14, paraSpaceAfter: 6 });
-  note(s, "Difference = 0.3214 − 0.317 ≈ 0.004 dB/km (about 1.4%). Check: 0.317 dB/km × 4.822 km ≈ 1.529 dB, which is about 0.02 dB less than the measured 1.550 dB.", 0.6, 5.85, 12.1, 0.8, false);
-  s.addNotes("Both values are close to what we expect for single-mode fiber at 1310 nm, which is roughly 0.3 to 0.4 dB/km.");
+  // ADV 4. TWO WAVELENGTHS & BIDIRECTIONAL
+  s = newSlide("OTDR Testing", "Two Wavelengths and Bidirectional Testing", "PART B  ·  OTDR TESTING  ·  GOING DEEPER");
+  img(s, "bidirectional.png", 0.45, 1.35, 7.2, 2.88, "Bidirectional splice loss averaging");
+  T(s, "Why one direction is not enough", { x: 0.6, y: 4.5, w: 7, h: 0.32, fontSize: 14.5, bold: true, color: NAVY });
+  T(s, "Two joined fibers can scatter back slightly different amounts of light (for example, different mode-field diameters). Seen from one side a splice can look worse than it is, or even show a gain (a 'gainer'). Testing from both ends and averaging cancels this. It is the standard way to report splice loss.", { x: 0.6, y: 4.85, w: 7.0, h: 1.9, fontSize: 12.5 });
+  vrule(s, 7.95, 1.4, 5.4);
+  sideList(s, 8.3, 1.35, 4.45, [
+    ["1310 nm vs 1550 nm", "1550 nm has lower fiber loss (typically ≈ 0.2 dB/km vs ≈ 0.33 dB/km at 1310 nm), but it is much more sensitive to bends.", 1.5],
+    ["Finding bends", "If an event's loss is much larger at 1550 nm than at 1310 nm, it is likely a bend. The same at both is likely a splice or connector.", 1.5],
+    ["1625 nm", "Also on our OTDR menu. Used to test fibers in service (with filters), without disturbing traffic.", 1.2],
+    ["Our next step", "Our result screen is at 1310 nm; repeating at 1550 nm and from the other end would complete the test.", 1.25],
+  ], 12.5);
+  s.addNotes("Bidirectional averaging and dual-wavelength comparison are common practice in professional OTDR acceptance testing.");
 
   // =====================================================================
   // RESULTS & CONCLUSION
@@ -359,6 +383,7 @@ async function findPhoto(base) {
   s = pres.addSlide({ masterName: "COVER", sectionTitle: "Results" });
   T(s, "Thank You", { x: 0.7, y: 2.3, w: 11.9, h: 1.3, fontFace: HEAD, fontSize: 60, bold: true, color: WHITE });
   T(s, "Questions?", { x: 0.7, y: 3.6, w: 11.9, h: 0.6, fontFace: HEAD, fontSize: 26, italic: true, color: SOFTORANGE });
+  T(s, [{ text: "Presented by   ", options: { color: MUTED } }, { text: "Neelesh  ·  Sriyans  ·  Abhilash", options: { bold: true, color: WHITE } }], { x: 0.7, y: 4.85, w: 11.9, h: 0.45, fontSize: 18 });
   T(s, "Fusion Splicing, OTDR Testing & Link Loss Measurement  ·  Optical Fiber Communication Laboratory", { x: 0.7, y: 6.6, w: 11.9, h: 0.35, fontSize: 12, color: MUTED });
   s.addShape(pres.shapes.LINE, { x: 0.7, y: 4.55, w: 11.9, h: 0, line: { color: "7FA5AB", width: 3 } });
   s.addShape(pres.shapes.LINE, { x: 0.7, y: 4.55, w: 5.2, h: 0, line: { color: SOFTORANGE, width: 3 } });

@@ -528,6 +528,59 @@ D.link_loss = () => {
   return svg(W, H, s);
 };
 
+
+// ---------- Advanced OTDR diagrams ----------
+D.dead_zones = () => {
+  const W = 1000, H = 520;
+  const p = [[0, 20], [0.02, 29.5], [0.07, 29.5], [0.16, 20.3], [1.6, 19.4], [1.62, 26], [1.67, 17.9], [5, 15.8], [5.02, 25], [5.1, 3], ...noiseTail(5.1, 6, 3, 2.5, 25)];
+  const o = { xmax: 6, ymin: 0, ymax: 32, pad: [80, 30, 30, 70] };
+  const { s, X, Y } = traceSvg(W, H, p, o);
+  let t = s;
+  t += `<rect x="${X(0)}" y="${Y(31)}" width="${X(0.16) - X(0)}" height="${Y(0) - Y(31)}" fill="${ORANGE}" opacity="0.12"/>`;
+  t += text(X(0.2), Y(30.5), "front-end dead zone", { size: 21, color: ORANGE });
+  t += arrow(X(1.6), Y(28.2), X(1.67), Y(28.2), TEAL, 2, "", true);
+  t += line(X(1.6), Y(27.5), X(1.6), Y(24), TEAL, 1.5, "4 3") + line(X(1.67), Y(27.5), X(1.67), Y(24), TEAL, 1.5, "4 3");
+  t += text(X(1.8), Y(28.6), "event dead zone (EDZ)", { size: 20, color: TEAL });
+  t += line(X(1.67), Y(17.9), X(2.1), Y(13), GREY, 1.2) + text(X(2.15), Y(12.6), "attenuation dead zone (ADZ): until trace", { size: 20, color: GREY }) + text(X(2.15), Y(12.6) + 24, "returns to the backscatter line", { size: 20, color: GREY });
+  t += arrow(X(5.6), Y(20), X(5.6), Y(4), NAVY, 2.5, "", true) + text(X(4.95), Y(9), "dynamic range", { size: 20, color: NAVY, anchor: "end" });
+  t += line(X(5.1), Y(20), X(5.7), Y(20), GREY, 1, "4 4");
+  t += text(W - 30, 30, "EXAMPLE — not our trace", { size: 21, color: ORANGE, anchor: "end", weight: 700 });
+  return svg(W, H, t);
+};
+D.pulse_compare = () => {
+  const W = 1000, H = 470;
+  const o = { xmax: 6, ymin: 0, ymax: 32, pad: [80, 30, 30, 70] };
+  const sp = [[0, 22], [2.0, 21.4], [2.02, 27], [2.05, 20.8], [2.25, 20.7], [2.27, 26.5], [2.3, 20.1], [4.4, 19.5], ...noiseTail(4.4, 6, 18.5, 5, 40)];
+  const lp = [[0, 28], [2.0, 27.4], [2.02, 30.5], [2.5, 26], [5.2, 25.2], [5.22, 29], [5.35, 6], ...noiseTail(5.35, 6, 5, 2, 12)];
+  const a = traceSvg(W, H, sp, Object.assign({ color: TEAL }, o));
+  const b = traceSvg(W, H, lp, Object.assign({ color: ORANGE, axes: false }, o));
+  let t = a.s + b.s;
+  t += text(a.X(2.6), a.Y(23.6), "long pulse: reaches far, but two close events merge", { size: 20, color: ORANGE });
+  t += text(a.X(0.2), a.Y(17.5), "short pulse: two events seen separately, but noisy far away", { size: 20, color: TEAL });
+  t += text(W - 30, 30, "EXAMPLE", { size: 21, color: GREY, anchor: "end", weight: 700 });
+  return svg(W, H, t);
+};
+D.ghost = () => {
+  const W = 1000, H = 470;
+  const p = [[0, 22], [0.02, 30], [0.12, 21.8], [2.5, 20.8], [2.52, 29], [2.6, 5], ...noiseTail(2.6, 4.98, 5, 2.5, 40), [5.0, 9.5], [5.03, 5], ...noiseTail(5.03, 6, 5, 2.5, 15)];
+  const o = { xmax: 6, ymin: 0, ymax: 32, pad: [80, 30, 30, 70] };
+  const { s, X, Y } = traceSvg(W, H, p, o);
+  let t = s + text(X(2.6), Y(29), "real fiber end (strong reflection)", { size: 20, color: NAVY });
+  t += line(X(5.0), Y(10), X(4.6), Y(20.5), ORANGE, 1.5) + text(X(4.5), Y(24), "ghost at 2 × distance — no loss", { size: 20, color: ORANGE, anchor: "middle" }) + text(X(4.5), Y(24) + 24, "after it, lies in the noise", { size: 20, color: ORANGE, anchor: "middle" });
+  t += text(W - 30, 30, "EXAMPLE — not our trace", { size: 21, color: ORANGE, anchor: "end", weight: 700 });
+  return svg(W, H, t);
+};
+D.bidirectional = () => {
+  const W = 1000, H = 400; let s = "";
+  s += rect(20, 140, 140, 90, { fill: "#3E4654", stroke: INK, sw: 2, r: 10 }) + text(90, 195, "OTDR", { size: 26, weight: 700, color: WHITE, anchor: "middle" });
+  s += rect(840, 140, 140, 90, { fill: "#3E4654", stroke: INK, sw: 2, r: 10 }) + text(910, 195, "OTDR", { size: 26, weight: 700, color: WHITE, anchor: "middle" });
+  s += line(160, 185, 840, 185, "#7FA5AB", 6) + circle(500, 185, 11, { fill: TEAL, stroke: "none" }) + text(500, 160, "splice", { size: 21, color: TEAL, anchor: "middle" });
+  s += arrow(200, 110, 470, 110, ORANGE, 3) + text(330, 95, "A → B reads 0.12 dB", { size: 21, color: ORANGE, anchor: "middle" });
+  s += arrow(800, 260, 530, 260, NAVY, 3) + text(670, 290, "B → A reads −0.04 dB (\"gainer\")", { size: 21, color: NAVY, anchor: "middle" });
+  s += text(500, 355, "true loss ≈ (0.12 + (−0.04)) / 2 = 0.04 dB", { size: 24, weight: 700, color: INK, anchor: "middle" });
+  s += text(500, 388, "Example numbers for illustration only", { size: 19, color: GREY, anchor: "middle", italic: true });
+  return svg(W, H, s);
+};
 // ---------- render ----------
 (async () => {
   for (const [name, fn] of Object.entries(D)) {
